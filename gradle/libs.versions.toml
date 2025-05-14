@@ -1,0 +1,8 @@
+[versions]
+boot = "3.4.4"
+lombok = "1.18.34"
+java = "21"
+
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "boot" }
