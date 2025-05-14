@@ -49,8 +49,9 @@ jobs:
         name: jacoco-report
         path: build/reports/jacoco/test/html
 
-    # 8. Discord 알림 발송
+    # 8. 항상 디스코드 알림 전송
     - name: Notify Discord
+      if: always()
       uses: tsickert/discord-webhook@v1
       with:
         webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -58,4 +59,5 @@ jobs:
           🚀 Workflow `${{ github.workflow }}` completed
           ✅ Status: `${{ job.status }}`
           🔗 [Run link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
 
