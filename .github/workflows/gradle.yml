@@ -52,7 +52,7 @@ jobs:
     # 8. Discord 알림 발송
     - name: Notify Discord on build result
       if: always()
-      uses: Ilshidur/action-discord@v1.0.1
+      uses: Ilshidur/action-discord@4ee39325858cd8c1757291d5042526f84f97d48d  # ✅ SHA 고정
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
         message: |
@@ -60,3 +60,4 @@ jobs:
           🔀 브랜치: `${{ github.ref_name }}`
           ✅ 상태: `Build job finished`
           🔗 [PR/커밋 보기](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
