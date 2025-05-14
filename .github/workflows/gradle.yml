@@ -50,14 +50,12 @@ jobs:
         path: build/reports/jacoco/test/html
 
     # 8. Discord 알림 발송
-    - name: Notify Discord on build result
-      if: always()
-      uses: Ilshidur/action-discord@4ee39325858cd8c1757291d5042526f84f97d48d  # ✅ SHA 고정
+    - name: Notify Discord
+      uses: tsickert/discord-webhook@v1
       with:
-        webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        message: |
-          🚀 GitHub Actions 완료: `${{ github.workflow }}`
-          🔀 브랜치: `${{ github.ref_name }}`
-          ✅ 상태: `Build job finished`
-          🔗 [PR/커밋 보기](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        content: |
+          🚀 Workflow `${{ github.workflow }}` completed
+          ✅ Status: `${{ job.status }}`
+          🔗 [Run link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
