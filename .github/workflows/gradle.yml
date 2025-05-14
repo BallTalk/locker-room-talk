@@ -1,0 +1,63 @@
+name: Java CI with Gradle
+
+# 워크플로우 트리거: main 브랜치에 push 또는 PR 발생 시 실행
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # GitHub에서 제공하는 Ubuntu 가상 머신에서 실행
+    permissions:
+      contents: read         # 기본 권한 설정
+
+    steps:
+    # 1. GitHub 저장소 코드를 체크아웃
+    - uses: actions/checkout@v4
+
+    # 2. JDK 21 설치 (Temurin은 OpenJDK 배포판 중 하나)
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    # 3. Gradle 환경 설정 (캐시 포함)
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+
+    # 4. 전체 빌드 수행 (compile, test 포함)
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build
+
+    # 5. 테스트 결과를 PR에 주석 형태로 표시 (항상 실행되도록 if: always())
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: '**/build/test-results/test/TEST-*.xml'
+
+    # 6. Jacoco 커버리지 리포트 생성 (HTML, XML 포함)
+    - name: Generate test coverage report
+      run: ./gradlew jacocoTestReport
+
+    # 7. 생성된 커버리지 리포트를 GitHub Actions에 업로드 (다운로드 가능)
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: jacoco-report
+        path: build/reports/jacoco/test/html
+
+    # 8. 빌드가 끝나면 디스코드 채널로 결과 알림 발송
+    - name: Notify Discord on build result
+      if: always()
+      uses: Ilshidur/action-discord@v1.0.1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        message: |
+          🚀 GitHub Actions 완료: `${{ github.workflow }}`
+          🔀 브랜치: `${{ github.ref_name }}`
+          ✅ 상태: `Build job finished`
+          🔗 [PR/커밋 보기](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
