@@ -1,0 +1,8 @@
+plugins {
+    id 'locker.java-conventions'
+    alias(libs.plugins.spring.boot)
+}
+
+dependencies {
+    // TODO: Add your dependencies here
+}
