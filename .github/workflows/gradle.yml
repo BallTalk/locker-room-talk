@@ -52,12 +52,14 @@ jobs:
     # 8. 항상 디스코드 알림 전송
     - name: Notify Discord
       if: always()
-      uses: tsickert/discord-webhook@v1
-      with:
-        webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        content: |
-          🚀 Workflow `${{ github.workflow }}` completed
-          ✅ Status: `${{ job.status }}`
-          🔗 [Run link](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      run: |
+        curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{
+            "content": "🚀 GitHub Actions 완료: `${{ github.workflow }}`\n🔀 브랜치: `${{ github.ref_name }}`\n✅ 상태: `${{ job.status }}`\n🔗 [PR/커밋 보기](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+
 
 
