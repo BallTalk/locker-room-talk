@@ -3,6 +3,9 @@ boot = "3.4.4"
 lombok = "1.18.34"
 java = "21"
 jacoco = "0.8.11"
+redisson       = "3.43.0"
+springdoc      = "2.2.0"
+testcontainers = "1.18.3"
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "boot" }
