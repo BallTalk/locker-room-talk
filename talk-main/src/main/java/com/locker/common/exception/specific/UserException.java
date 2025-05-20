@@ -11,7 +11,13 @@ public class UserException extends CustomException {
     public static UserException loginIdBlank() {
         return new UserException(ErrorCode.LOGIN_ID_REQUIRED);
     }
-    public static UserException passwordBlank() {
-        return new UserException(ErrorCode.PASSWORD_REQUIRED);
+
+    public static UserException loginIdDuplicate() {
+        return new UserException(ErrorCode.LOGIN_ID_DUPLICATE);
     }
+
+    public static UserException passwordNotMatch() {
+        return new UserException(ErrorCode.PASSWORD_DO_NOT_MATCH);
+    }
+
 }
