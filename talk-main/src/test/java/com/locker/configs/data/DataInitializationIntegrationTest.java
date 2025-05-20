@@ -19,27 +19,32 @@ class DataInitializationIntegrationTest {
     private JdbcTemplate jdbc;
 
     @Test
-    @DisplayName("")
+    @DisplayName("Testcontainers 실행 시 schema.sql/data.sql이 정상적으로 적용된다")
     void Testcontainers_실행_시_DATA_SQL_SCHEMA_SQL_파일이_정상적으로_적용된다() {
-        // 테이블이 있는지 메타데이터로 확인
+        // 테이블 존재 여부 확인
         Integer tables = jdbc.queryForObject(
-                "SELECT COUNT(*) FROM information_schema.tables "
-                        + "WHERE table_schema = DATABASE() AND table_name = 'user'",
+                "SELECT COUNT(*) FROM information_schema.tables " +
+                        "WHERE table_schema = DATABASE() AND table_name = 'user'",
                 Integer.class);
         assertThat(tables).isOne();
 
-        // data.sql 에 INSERT 한 레코드가 들어있는지 확인
+        // data.sql 에서 INSERT 한 레코드가 들어있는지 확인 (nickname 값 일치)
+        String expectedNickname = "테스트유저1";
         Integer count = jdbc.queryForObject(
-                "SELECT COUNT(*) FROM `user` WHERE name = ?",
+                "SELECT COUNT(*) FROM `user` WHERE nickname = ?",
                 Integer.class,
-                "테스트");
+                expectedNickname);
         assertThat(count).isOne();
 
-        // 3)생성·수정 타임스탬프를 출력
+        // 생성·수정 타임스탬프 및 nickname 조회
         Map<String, Object> user = jdbc.queryForMap(
-                "SELECT id, name, created_at, updated_at FROM `user` WHERE name = ?",
-                "테스트");
+                "SELECT id, nickname, created_at, updated_at " +
+                        "FROM `user` WHERE nickname = ?",
+                expectedNickname);
         log.debug("테스트 유저 정보 : {} ", user);
-        assertThat(user.get("name")).isEqualTo("테스트");
+
+        assertThat(user.get("nickname")).isEqualTo(expectedNickname);
+        assertThat(user.get("created_at")).isNotNull();
+        assertThat(user.get("updated_at")).isNotNull();
     }
 }

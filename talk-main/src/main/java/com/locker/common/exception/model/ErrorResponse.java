@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
 @Data
 public class ErrorResponse {
 
-    private int status;
+    private HttpStatus status;
     private String message;
     private List<FieldError> errors;
 
