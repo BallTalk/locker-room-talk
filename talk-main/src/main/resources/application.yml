@@ -33,12 +33,25 @@ spring:
               - profile
               - email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+          kakao:
+            client-id: 30400a0e4f47904ef294d821a133a525
+            client-secret: ${KAKAO_CLIENT_SECRET:8f4d7c9a0b2e3d4f5g6h7i8j9k0l1m2n}  # (선택) 보안용, 임시
+            client-authentication-method: post
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: [ account_email, profile_nickname, profile_image ]
+            authorization-grant-type: authorization_code
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 ---
 
 spring.config.activate.on-profile: local, test
