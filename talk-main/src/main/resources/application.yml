@@ -21,8 +21,26 @@ spring:
       hibernate.timezone.default_storage: NORMALIZE_UTC
       hibernate.jdbc.time_zone: UTC
       hibernate.hbm2ddl.schema-generation.foreign-key-handling-mode: skip
-
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 747425265933-d509qhcapbk8fhc2b9g12kpnai3649gq.apps.googleusercontent.com # CI/CD 파이프라인 환경변수로 설정 필요
+            client-secret: GOCSPX-HqsV_fzySG|Bq||8K1CNjHkPcZNJ
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
 ---
+
 spring.config.activate.on-profile: local, test
 
 spring:
@@ -37,6 +55,11 @@ spring:
       data-locations: classpath:sql/data.sql
 
 ---
+
+jwt:
+  secret: ${JWT_SECRET:c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK}
+  expiration-ms: 3600000
+# 운영환경 : ~/.bashrc, ~/.bash_profile 또는 ~/.zshrc에 추가: export JWT_SECRET="Base64_시크릿", secret: ${JWT_SECRET}
 
 logging:
   level:

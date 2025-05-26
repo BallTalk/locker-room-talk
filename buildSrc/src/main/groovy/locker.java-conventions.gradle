@@ -25,6 +25,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+
+    implementation "io.jsonwebtoken:jjwt-api:${libs.versions.jjwt.get()}"
+    runtimeOnly   "io.jsonwebtoken:jjwt-impl:${libs.versions.jjwt.get()}"
+    runtimeOnly   "io.jsonwebtoken:jjwt-jackson:${libs.versions.jjwt.get()}"
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation "org.redisson:redisson-spring-boot-starter:${libs.versions.redisson.get()}"

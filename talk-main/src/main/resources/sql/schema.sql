@@ -5,8 +5,8 @@ CREATE TABLE `user` (
                         login_id           VARCHAR(20)   NULL UNIQUE COMMENT '아이디',
                         provider           VARCHAR(10)   NOT NULL DEFAULT 'LOCAL' COMMENT '가입 방식',
                                                          CHECK (provider IN ('LOCAL','GOOGLE','KAKAO')),
-                        provider_user_id   VARCHAR(100)  NULL                COMMENT 'OAuth 공급자 유저 ID',
-                        password           VARCHAR(255)  NOT NULL            COMMENT '패스워드',
+                        provider_id        VARCHAR(100)  NULL                COMMENT 'OAuth 공급자 ID',
+                        password           VARCHAR(255)  NULL                COMMENT '패스워드(소셜로그인 = null)',
                         nickname           VARCHAR(20)   NOT NULL            COMMENT '닉네임',
                         favorite_team_id   VARCHAR(20)   NOT NULL            COMMENT '유저 응원팀 ID',
                         profile_image_url  VARCHAR(255)  NULL                COMMENT '프로필 이미지 URL', -- 임시
