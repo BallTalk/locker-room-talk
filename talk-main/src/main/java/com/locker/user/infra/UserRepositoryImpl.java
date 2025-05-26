@@ -1,5 +1,6 @@
 package com.locker.user.infra;
 
+import com.locker.user.domain.Provider;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,11 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
+
+    @Override
+    public void deleteAll() {
+        userJpaRepository.deleteAll();
+    }
 
     @Override
     public void save(User user) {
@@ -27,4 +33,11 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByLoginId(String loginId) {
         return userJpaRepository.findByLoginId(loginId);
     }
+
+    @Override
+    public Optional<User> findByProviderAndProviderId(Provider provider, String oauthId) {
+        return userJpaRepository.findByProviderAndProviderId(provider, oauthId);
+    }
+
+
 }

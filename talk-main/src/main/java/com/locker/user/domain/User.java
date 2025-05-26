@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,8 +30,8 @@ public class User extends BaseEntity {
     )
     private Provider provider;
 
-    @Column(name = "provider_user_id", length = 100)
-    private String providerUserId;
+    @Column(name = "provider_id", length = 100)
+    private String providerId;
 
     @Column(name = "password", length = 255, nullable = false)
     private String password;
@@ -76,6 +77,24 @@ public class User extends BaseEntity {
                 .nickname(nickname)
                 .favoriteTeamId(favoriteTeamId)
                 .provider(Provider.LOCAL)
+                .status(Status.ACTIVE)
+                .loginFailCount(0)
+                .build();
+    }
+
+    public static User createOAuthUser(
+            Provider provider,
+            String providerId,
+            String nickname,
+            String favoriteTeamId
+    ) {
+        return User.builder()
+                .loginId(null)
+                .password(null)
+                .provider(provider)
+                .providerId(providerId)
+                .nickname(nickname)
+                .favoriteTeamId(favoriteTeamId) // << 로그인 후 재설정하거나 Null 허용해야할듯
                 .status(Status.ACTIVE)
                 .loginFailCount(0)
                 .build();
