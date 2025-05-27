@@ -46,3 +46,5 @@ logging:
     org.springframework.boot.autoconfigure.sql.init.ScriptDatabaseInitializer: DEBUG
     org.springframework.jdbc.datasource.init.ScriptUtils: DEBUG
 
+cors:
+  allowed-origins: http://localhost:3000
