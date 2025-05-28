@@ -1,5 +1,6 @@
 package com.locker.user.infra;
 
+import com.locker.user.domain.Provider;
 import com.locker.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,4 +12,5 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByLoginId(String loginId);
 
+    Optional<User> findByProviderAndProviderId(Provider provider, String oauthId);
 }

@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     // USER
+    AUTHENTICATION_FAILED           (HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
+    TOKEN_BLACKLISTED               (HttpStatus.UNAUTHORIZED, "로그아웃된 토큰입니다."),
+    USER_NOT_FOUND                  (HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     LOGIN_ID_REQUIRED               (HttpStatus.BAD_REQUEST, "로그인 아이디는 필수입니다."),
     LOGIN_ID_LENGTH_INVALID         (HttpStatus.BAD_REQUEST, "로그인 아이디는 5~20자여야 합니다."),
     LOGIN_ID_PATTERN_INVALID        (HttpStatus.BAD_REQUEST, "로그인 아이디는 영문 대·소문자와 숫자 조합만 허용됩니다."),
