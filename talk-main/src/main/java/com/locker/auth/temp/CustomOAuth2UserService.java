@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,37 +22,47 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate;
+    private final DefaultOAuth2UserService delegate;
     private final UserRepository userRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest req)
             throws OAuth2AuthenticationException {
 
-        // 1) 구글/카카오 API 로부터 프로필 정보 가져오기
         OAuth2User oauth2User = delegate.loadUser(req);
-
 
         String registrationId = req.getClientRegistration().getRegistrationId();
         Provider provider = Provider.valueOf(registrationId.toUpperCase());
+
         String userIdAttr = getUserIdAttributeName(provider);
         String oauthId    = oauth2User.getAttribute(userIdAttr);
-        String email      = oauth2User.getAttribute("email");
-        String nickname   = email != null ? email.split("@")[0] : "unknown";
+        String nickname;
+        String profileImageUrl = null;
+
+        if (provider == Provider.KAKAO) {
+            @SuppressWarnings("unchecked")
+            Map<String,Object> kakaoAccount =
+                    (Map<String,Object>) oauth2User.getAttributes().get("kakao_account");
+            @SuppressWarnings("unchecked")
+            Map<String,Object> profile =
+                    (Map<String,Object>) kakaoAccount.get("profile");
+            nickname = (String) profile.getOrDefault("nickname", "unknown");
+            profileImageUrl = (String) profile.get("profile_image_url");
+        }
+
+        else { // GOOGLE
+            String email = oauth2User.getAttribute("email");
+            nickname = (email != null) ? email.split("@")[0] : "unknown";
+        }
 
         Optional<User> opt = userRepository.findByProviderAndProviderId(provider, oauthId);
         if (opt.isEmpty()) {
-            User newUser = User.createOAuthUser(provider, oauthId, nickname, "DEFAULT_TEAM");
+            User newUser = User.createOAuthUser(provider, oauthId, nickname, "NOT_SET", profileImageUrl);
             userRepository.save(newUser);
         }
 
-        Set<GrantedAuthority> auths =
-                Set.of(new SimpleGrantedAuthority("ROLE_USER"));
-        return new DefaultOAuth2User(
-                auths,
-                oauth2User.getAttributes(),
-                userIdAttr
-        );
+        Set<GrantedAuthority> auths = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return new DefaultOAuth2User(auths, oauth2User.getAttributes(), userIdAttr);
     }
 
     private String getUserIdAttributeName(Provider provider) {

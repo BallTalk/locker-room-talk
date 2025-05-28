@@ -86,7 +86,8 @@ public class User extends BaseEntity {
             Provider provider,
             String providerId,
             String nickname,
-            String favoriteTeamId
+            String favoriteTeamId,
+            String profileImageUrl    // ← 새로 추가
     ) {
         return User.builder()
                 .loginId(null)
@@ -94,7 +95,8 @@ public class User extends BaseEntity {
                 .provider(provider)
                 .providerId(providerId)
                 .nickname(nickname)
-                .favoriteTeamId(favoriteTeamId) // << 로그인 후 재설정하거나 Null 허용해야할듯
+                .favoriteTeamId(favoriteTeamId) // NOT_SET
+                .profileImageUrl(profileImageUrl)
                 .status(Status.ACTIVE)
                 .loginFailCount(0)
                 .build();
