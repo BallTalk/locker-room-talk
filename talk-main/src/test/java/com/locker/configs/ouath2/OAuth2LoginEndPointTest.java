@@ -19,9 +19,9 @@ class OAuth2LoginEndPointTest {
     MockMvc mvc;
 
     /**
-     * SecurityConfig 에서 `/oauth2/**` 경로를 `permitAll()` 로 열어 두었고,
-     * JwtAuthenticationFilter 의 `shouldNotFilter()` 에서 이 경로를 검사 대상에서 제외했기 때문에,
-     * JWT 검증을 우회하여 곧바로 구글 인증 서버로 302 리다이렉트를 수행한다.
+     * OAuth2SecurityConfig 에서 `/oauth2/**` 경로 전용으로 SecurityFilterChain을 분리했고,
+     * JwtSecurityConfig 에는 `.securityMatcher("/api/**")` 만 적용되므로,
+     * `/oauth2/**` 요청은 JWT 필터가 전혀 등록되지 않아 바로 OAuth2 로그인 흐름(302 리다이렉트)으로 넘어간다.
      */
     @Test
     void OAUTH2_GOOGLE_인증_요청_시_구글_로그인_페이지로_302_REDIRECTION_응답을_반환한다()  throws Exception {
@@ -32,4 +32,14 @@ class OAuth2LoginEndPointTest {
                         startsWith("https://accounts.google.com/o/oauth2/v2/auth")
                 ));
     }
+    @Test
+    void OAUTH2_KAKAO_인증_요청_시_카카오_로그인_페이지로_302_REDIRECTION_응답을_반환한다() throws Exception {
+        mvc.perform(get("/oauth2/authorization/kakao"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string(
+                        "Location",
+                        startsWith("https://kauth.kakao.com/oauth/authorize")
+                ));
+    }
+
 }
