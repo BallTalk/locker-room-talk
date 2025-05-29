@@ -149,13 +149,16 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void OAuth2_로그인시작_URL이면_필터를_스킵한다() throws Exception {
+        // Given
         MockHttpServletRequest req = new MockHttpServletRequest();
         req.setServletPath("/oauth2/authorization/google");
         // (헤더가 있든 없든 관계없이)
         MockHttpServletResponse res = new MockHttpServletResponse();
 
+        // When
         filter.doFilter(req, res, chain);
 
+        // Then
         // 토큰 프로바이더나 블랙리스트 서비스는 전혀 호출되지 않고
         verifyNoInteractions(tokenProvider, blacklistService, userDetailsService);
         // 체인만 한 번 호출
@@ -164,12 +167,15 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void OAuth2_콜백_URL이면_필터를_스킵한다() throws Exception {
+        // Given
         MockHttpServletRequest req = new MockHttpServletRequest();
         req.setServletPath("/login/oauth2/code/google");
         MockHttpServletResponse res = new MockHttpServletResponse();
 
+        // When
         filter.doFilter(req, res, chain);
 
+        // Then
         verifyNoInteractions(tokenProvider, blacklistService, userDetailsService);
         verify(chain).doFilter(req, res);
     }
