@@ -1,7 +1,6 @@
-package com.locker.config.security;
+package com.locker.auth.application;
 
 import com.locker.common.exception.specific.AuthException;
-import com.locker.common.exception.specific.UserException;
 import com.locker.user.domain.Status;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;

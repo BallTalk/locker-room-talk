@@ -1,6 +1,6 @@
 package com.locker.configs.jwt;
 
-import com.locker.auth.temp.JwtBlacklistService;
+import com.locker.auth.application.JwtBlacklistService;
 import com.locker.config.jwt.JwtAuthenticationFilter;
 import com.locker.config.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

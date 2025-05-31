@@ -1,7 +1,8 @@
-package com.locker.auth.temp;
+package com.locker.auth.application;
 
+import com.locker.auth.api.LoginRequest;
+import com.locker.auth.api.LoginResponse;
 import com.locker.common.exception.specific.AuthException;
-import com.locker.common.exception.specific.UserException;
 import com.locker.config.jwt.JwtProperties;
 import com.locker.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,11 @@ public class AuthService {
     private final JwtTokenProvider jwtProvider;
     private final JwtProperties jwtProperties;
 
-    public LoginResponse login(LoginRequest req) {
+    public LoginResponse login(LoginCommand command) {
 
         try {
             Authentication auth = authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(req.loginId(), req.password())
+                    new UsernamePasswordAuthenticationToken(command.loginId(), command.password())
             );
             String token = jwtProvider.createToken(auth);
             long expirationMs = System.currentTimeMillis() + jwtProperties.getExpirationMs();

@@ -1,4 +1,4 @@
-package com.locker.auth.temp;
+package com.locker.auth.application;
 
 import com.locker.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;

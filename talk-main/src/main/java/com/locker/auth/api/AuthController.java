@@ -1,8 +1,9 @@
-package com.locker.auth.temp;
+package com.locker.auth.api;
 
+import com.locker.auth.application.AuthService;
+import com.locker.auth.application.JwtBlacklistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(
             @RequestBody @Valid LoginRequest req
     ) {
-        LoginResponse resp = authService.login(req);
+        LoginResponse resp = authService.login(req.toCommand());
         return ResponseEntity.ok(resp);
     }
 

@@ -1,7 +1,7 @@
 package com.locker.config.security;
 
 
-import com.locker.auth.temp.CustomOAuth2UserService;
+import com.locker.auth.application.CustomOAuth2UserService;
 import com.locker.config.jwt.OAuth2JwtSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

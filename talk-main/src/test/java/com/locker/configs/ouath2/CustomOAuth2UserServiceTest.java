@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.locker.auth.temp.CustomOAuth2UserService;
+import com.locker.auth.application.CustomOAuth2UserService;
 import com.locker.user.domain.Provider;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;

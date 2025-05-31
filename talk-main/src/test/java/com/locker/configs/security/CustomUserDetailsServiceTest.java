@@ -1,8 +1,7 @@
 package com.locker.configs.security;
 
 import com.locker.common.exception.specific.AuthException;
-import com.locker.common.exception.specific.UserException;
-import com.locker.config.security.CustomUserDetailsService;
+import com.locker.auth.application.CustomUserDetailsService;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

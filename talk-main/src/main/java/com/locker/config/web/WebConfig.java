@@ -15,14 +15,11 @@ public class WebConfig implements WebMvcConfigurer {
     private final LoggingInterceptor loggingInterceptor;
     private final CorsProperties corsProperties;
 
-
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loggingInterceptor)
                 .addPathPatterns("/**"); // 모든 경로에 인터셉터 적용
     }
-
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {

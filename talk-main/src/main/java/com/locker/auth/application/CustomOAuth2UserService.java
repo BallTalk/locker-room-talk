@@ -1,4 +1,4 @@
-package com.locker.auth.temp;
+package com.locker.auth.application;
 
 import com.locker.user.domain.Provider;
 import com.locker.user.domain.User;

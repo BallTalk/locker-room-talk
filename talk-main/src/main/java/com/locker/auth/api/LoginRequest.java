@@ -1,5 +1,6 @@
-package com.locker.user.api;
+package com.locker.auth.api;
 
+import com.locker.auth.application.LoginCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
@@ -12,4 +13,8 @@ public record LoginRequest(
         @Schema(description = "비밀번호", example = "P@ssw0rd!")
         @NotBlank(message = "PASSWORD_REQUIRED")
         String password
-) {}
+) {
+        public LoginCommand toCommand() {
+                return new LoginCommand(loginId, password);
+        }
+}
