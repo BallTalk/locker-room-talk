@@ -3,7 +3,6 @@ package com.locker.user;
 import com.locker.common.exception.model.ErrorCode;
 import com.locker.common.exception.specific.UserException;
 import com.locker.user.domain.*;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -31,10 +30,11 @@ public class UserServiceUnitTest {
     void 회원가입_중_비밀번호_불일치_시_PASSWORD_DO_NOT_MATCH_예외가_발생한다() {
         // given
         String loginId = "user1", pw = "abc", confirm = "def";
+        Team team = Team.DOOSAN_BEARS;
 
         // when & then
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp(loginId, pw, confirm, "nick", "team1"));
+                () -> userService.signUp(loginId, pw, confirm, "nick", team));
         assertEquals(ErrorCode.PASSWORD_DO_NOT_MATCH, ex.getErrorCode());
         verifyNoInteractions(userRepository);
     }
@@ -43,10 +43,11 @@ public class UserServiceUnitTest {
     void 회원가입_중_아이디가_중복될_시_LOGIN_ID_DUPLICATE_예외가_발생한다() {
         // given
         when(userRepository.existsByLoginId("user1")).thenReturn(true);
+        Team team = Team.LG_TWINS;
 
         // when & then
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp("user1", "pw", "pw", "nick", "team1"));
+                () -> userService.signUp("user1", "pw", "pw", "nick", team));
         assertEquals(ErrorCode.LOGIN_ID_DUPLICATE, ex.getErrorCode());
         verify(userRepository).existsByLoginId("user1");
         verifyNoMoreInteractions(userRepository);
@@ -57,21 +58,22 @@ public class UserServiceUnitTest {
         // given
         when(userRepository.existsByLoginId("user1")).thenReturn(false);
         when(passwordEncoder.encode("pw")).thenReturn("ENCODED");
+        Team team = Team.KIA_TIGERS;
 
         // when
-        userService.signUp("user1", "pw", "pw", "nick", "team1");
+        userService.signUp("user1", "pw", "pw", "nick", team);
 
         // then
         verify(passwordEncoder).encode("pw");
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(captor.capture());
         User saved = captor.getValue();
-        assertEquals("user1",        saved.getLoginId());
-        assertEquals("ENCODED",      saved.getPassword());
-        assertEquals("nick",         saved.getNickname());
-        assertEquals("team1",        saved.getFavoriteTeamId());
-        assertEquals(Provider.LOCAL, saved.getProvider());
-        assertEquals(Status.ACTIVE,  saved.getStatus());
+        assertEquals("user1",           saved.getLoginId());
+        assertEquals("ENCODED",         saved.getPassword());
+        assertEquals("nick",            saved.getNickname());
+        assertEquals(team,              saved.getFavoriteTeam());
+        assertEquals(Provider.LOCAL,    saved.getProvider());
+        assertEquals(Status.ACTIVE,     saved.getStatus());
     }
 
     @Test

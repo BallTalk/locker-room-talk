@@ -39,8 +39,9 @@ public class User extends BaseEntity {
     @Column(name = "nickname", length = 20, nullable = false)
     private String nickname;
 
-    @Column(name = "favorite_team_id", length = 20, nullable = false)
-    private String favoriteTeamId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "favorite_team", length = 20, nullable = false)
+    private Team favoriteTeam;
 
     @Column(name = "profile_image_url", length = 255)
     private String profileImageUrl;
@@ -69,13 +70,13 @@ public class User extends BaseEntity {
             String loginId,
             String encodedPassword,
             String nickname,
-            String favoriteTeamId
+            Team favoriteTeam
     ) {
         return User.builder()
                 .loginId(loginId)
                 .password(encodedPassword)
                 .nickname(nickname)
-                .favoriteTeamId(favoriteTeamId)
+                .favoriteTeam(favoriteTeam)
                 .provider(Provider.LOCAL)
                 .status(Status.ACTIVE)
                 .loginFailCount(0)
@@ -86,8 +87,8 @@ public class User extends BaseEntity {
             Provider provider,
             String providerId,
             String nickname,
-            String favoriteTeamId,
-            String profileImageUrl    // ← 새로 추가
+            Team favoriteTeam,
+            String profileImageUrl
     ) {
         return User.builder()
                 .loginId(null)
@@ -95,7 +96,7 @@ public class User extends BaseEntity {
                 .provider(provider)
                 .providerId(providerId)
                 .nickname(nickname)
-                .favoriteTeamId(favoriteTeamId) // NOT_SET
+                .favoriteTeam(favoriteTeam)
                 .profileImageUrl(profileImageUrl)
                 .status(Status.ACTIVE)
                 .loginFailCount(0)

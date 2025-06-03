@@ -1,8 +1,10 @@
 package com.locker.user.api;
 
 import com.locker.user.application.SignUpCommand;
+import com.locker.user.domain.Team;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -32,11 +34,11 @@ public record SignUpRequest(
         @Size(min = 5, max = 20, message = "NICKNAME_LENGTH_INVALID")
         String nickname,
 
-        @Schema(description = "응원 팀 ID (KBO 팀 코드)", example = "samsung")
-        @NotBlank(message = "FAVORITE_TEAM_ID_REQUIRED")
-        String favoriteTeamId
+        @Schema(description = "응원 팀 (KBO)", example = "DOOSAN_BEARS")
+        @NotNull(message = "FAVORITE_TEAM_REQUIRED")
+        Team favoriteTeam
 ) {
         public SignUpCommand toCommand() {
-                return new SignUpCommand(loginId, password, confirmPassword, nickname, favoriteTeamId);
+                return new SignUpCommand(loginId, password, confirmPassword, nickname, favoriteTeam);
         }
 }

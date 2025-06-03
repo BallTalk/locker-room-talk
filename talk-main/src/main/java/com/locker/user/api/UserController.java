@@ -1,12 +1,15 @@
 package com.locker.user.api;
 
+import com.locker.config.security.CurrentUser;
 import com.locker.user.application.UserFacade;
+import com.locker.user.application.UserInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +45,19 @@ public class UserController {
             @RequestParam String loginId
     ) {
         return ResponseEntity.ok(userFacade.exists(loginId));
+    }
+
+    @GetMapping("/me")
+    @Operation(
+            summary = "내 프로필 조회",
+            description = "현재 로그인된 사용자의 정보를 반환합니다.(@CurrentUser)"
+    )
+    public ResponseEntity<UserResponse> getMyProfile(
+            @CurrentUser String loginId
+    ) {
+        return ResponseEntity.ok(
+                UserResponse.from(userFacade.getUserByLoginId(loginId))
+        );
     }
 
 }

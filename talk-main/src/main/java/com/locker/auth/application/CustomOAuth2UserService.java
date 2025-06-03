@@ -1,6 +1,7 @@
 package com.locker.auth.application;
 
 import com.locker.user.domain.Provider;
+import com.locker.user.domain.Team;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String oauthId    = oauth2User.getAttribute(userIdAttr);
         String nickname;
         String profileImageUrl = null;
+        Team team = Team.NOT_SET;
 
         if (provider == Provider.KAKAO) {
             @SuppressWarnings("unchecked")
@@ -57,7 +59,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         Optional<User> opt = userRepository.findByProviderAndProviderId(provider, oauthId);
         if (opt.isEmpty()) {
-            User newUser = User.createOAuthUser(provider, oauthId, nickname, "NOT_SET", profileImageUrl);
+            User newUser = User.createOAuthUser(provider, oauthId, nickname, team, profileImageUrl);
             userRepository.save(newUser);
         }
 

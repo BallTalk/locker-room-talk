@@ -1,4 +1,4 @@
-package com.locker.configs.ouath2;
+package com.locker.config.ouath2;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.locker.auth.application.CustomOAuth2UserService;
 import com.locker.user.domain.Provider;
+import com.locker.user.domain.Team;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,7 +103,7 @@ class CustomOAuth2UserServiceTest {
                 Provider.GOOGLE,
                 "ABC",
                 "baz",
-                "NOT_SET",
+                Team.NOT_SET,
                 null
         );
         given(userRepository.findByProviderAndProviderId(Provider.GOOGLE, "ABC"))

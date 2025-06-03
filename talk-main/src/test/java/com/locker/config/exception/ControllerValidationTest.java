@@ -1,4 +1,4 @@
-package com.locker.configs.exception;
+package com.locker.config.exception;
 
 import com.locker.auth.api.AuthController;
 import com.locker.common.exception.handler.GlobalExceptionHandler;

@@ -1,6 +1,7 @@
 package com.locker.user.domain;
 
 import com.locker.common.exception.specific.UserException;
+import com.locker.user.api.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class UserService {
     }
 
     @Transactional
-    public void signUp(String loginId, String password, String confirmPassword, String nickname, String favoriteTeamId) {
+    public void signUp(String loginId, String password, String confirmPassword, String nickname, Team favoriteTeam) {
 
         if (!password.equals(confirmPassword)) {
             throw UserException.passwordNotMatch();
@@ -34,10 +35,13 @@ public class UserService {
         validateLoginIdNotDuplicate(loginId);
 
         String encodedPassword = passwordEncoder.encode(password);
-        User user = User.createLocalUser(loginId, encodedPassword, nickname, favoriteTeamId);
+        User user = User.createLocalUser(loginId, encodedPassword, nickname, favoriteTeam);
 
         userRepository.save(user);
     }
 
-
+    public User findByLoginId(String loginId) {
+       return userRepository.findByLoginId(loginId)
+               .orElseThrow(UserException::userNotFound);
+    }
 }
