@@ -1,4 +1,4 @@
-package com.locker.configs.ouath2;
+package com.locker.config.ouath2;
 
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

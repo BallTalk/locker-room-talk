@@ -1,4 +1,4 @@
-package com.locker.configs.ouath2;
+package com.locker.config.ouath2;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.locker.configs.ouath2;
+package com.locker.config.ouath2;
 
 import com.locker.config.jwt.JwtTokenProvider;
 import com.locker.config.jwt.OAuth2JwtSuccessHandler;
