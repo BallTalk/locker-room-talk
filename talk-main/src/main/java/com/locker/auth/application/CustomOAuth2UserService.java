@@ -36,7 +36,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Provider provider = Provider.valueOf(registrationId.toUpperCase());
 
         String userIdAttr = getUserIdAttributeName(provider);
-        String oauthId    = oauth2User.getAttribute(userIdAttr);
+        Object rawId = oauth2User.getAttribute(userIdAttr);
+        String oauthId = (rawId != null) ? rawId.toString() : null;
+
         String nickname;
         String profileImageUrl = null;
         Team team = Team.NOT_SET;

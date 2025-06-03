@@ -50,9 +50,9 @@ spring:
           kakao:
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
-            client-authentication-method: post
+            client-authentication-method: client_secret_post
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope: [ account_email, profile_nickname, profile_image ]
+            scope: [ profile_nickname, profile_image ] # account_email 사용하려면 개인정보 동의항목 심사 신청
             authorization-grant-type: authorization_code
         provider:
           google:
