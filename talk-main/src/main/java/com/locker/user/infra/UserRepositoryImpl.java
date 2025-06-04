@@ -37,10 +37,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByLoginIdAndStatusIn(String loginId, List<Status> statuses) {
-        return userJpaRepository.findByLoginIdAndStatusIn(loginId, statuses);
-    }
-    @Override
     public Optional<User> findByProviderAndProviderId(Provider provider, String oauthId) {
         return userJpaRepository.findByProviderAndProviderId(provider, oauthId);
     }

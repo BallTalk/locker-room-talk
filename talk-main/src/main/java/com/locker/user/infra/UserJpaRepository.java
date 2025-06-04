@@ -16,5 +16,4 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByProviderAndProviderId(Provider provider, String oauthId);
 
-    Optional<User> findByLoginIdAndStatusIn(String loginId, List<Status> statuses);
 }

@@ -14,6 +14,4 @@ public interface UserRepository {
     Optional<User> findByLoginId(String loginId);
 
     Optional<User> findByProviderAndProviderId(Provider provider, String oauthId);
-
-    Optional<User> findByLoginIdAndStatusIn(String loginId, List<Status> statuses);
 }

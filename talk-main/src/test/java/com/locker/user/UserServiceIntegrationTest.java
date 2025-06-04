@@ -2,10 +2,7 @@ package com.locker.user;
 
 import com.locker.common.exception.model.ErrorCode;
 import com.locker.common.exception.specific.UserException;
-import com.locker.user.domain.Team;
-import com.locker.user.domain.User;
-import com.locker.user.domain.UserRepository;
-import com.locker.user.domain.UserService;
+import com.locker.user.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -114,4 +114,145 @@ public class UserServiceIntegrationTest {
         // then
         assertFalse(result);
     }
+
+    @Test
+    void findByLoginId_호출_시_DB에_존재하는_사용자는_User를_반환한다() {
+        // given: 미리 저장된 사용자
+        String loginId = "findUser";
+        String encoded = passwordEncoder.encode("pw123");
+        Team team = Team.LG_TWINS;
+        userRepository.save(
+                User.createLocalUser(loginId, encoded, "nickFind", team)
+        );
+
+        // when
+        User found = userService.findByLoginId(loginId);
+
+        // then
+        assertNotNull(found);
+        assertEquals(loginId, found.getLoginId());
+    }
+
+    @Test
+    void findByLoginIdAndActiveOrDormant_호출시_상태_ACTIVE인_User를_반환한다() {
+        // given: ACTIVE 상태 사용자 저장
+        String loginId = "activeUser";
+        String encoded = passwordEncoder.encode("pwActive");
+        Team team = Team.KIA_TIGERS;
+        userRepository.save(
+                User.createLocalUser(loginId, encoded, "nickActive", team)
+        );
+        // 기본 생성 시 Status.ACTIVE
+
+        // when
+        User result = userService.findByLoginIdAndActiveOrDormant(loginId);
+
+        // then
+        assertNotNull(result);
+        assertEquals(Status.ACTIVE, result.getStatus());
+    }
+
+    @Test
+    void findByLoginIdAndActiveOrDormant_호출시_상태_DORMANT인_User를_반환한다() {
+        // given: DORMANT 상태로 직접 설정된 사용자
+        String loginId = "dormantUser";
+        String encoded = passwordEncoder.encode("pwDormant");
+        Team team = Team.SSG_LANDERS;
+        userRepository.save(
+                User.createLocalUser(loginId, encoded, "nickDormant", team)
+        );
+        User toUpdate = userRepository.findByLoginId(loginId).get();
+        // withdraw()를 호출하면 Status.WITHDRAWN이 되므로, 다음과 같이 직접 DORMANT로 재저장
+        userRepository.save(
+                User.builder()
+                        .id(toUpdate.getId())
+                        .loginId(toUpdate.getLoginId())
+                        .provider(toUpdate.getProvider())
+                        .providerId(toUpdate.getProviderId())
+                        .password(toUpdate.getPassword())
+                        .nickname(toUpdate.getNickname())
+                        .favoriteTeam(toUpdate.getFavoriteTeam())
+                        .profileImageUrl(toUpdate.getProfileImageUrl())
+                        .statusMessage(toUpdate.getStatusMessage())
+                        .status(Status.DORMANT)
+                        .lastLoginAt(toUpdate.getLastLoginAt())
+                        .loginFailCount(toUpdate.getLoginFailCount())
+                        .deletedAt(toUpdate.getDeletedAt())
+                        .build()
+        );
+
+        // when
+        User result = userService.findByLoginIdAndActiveOrDormant(loginId);
+
+        // then
+        assertNotNull(result);
+        assertEquals(Status.DORMANT, result.getStatus());
+    }
+
+
+    @Test
+    void updateProfile_호출시_DB에_존재하는_사용자의_닉네임_프로필URL_상태메시지가_변경된다() {
+        // given: 사용자 저장
+        String loginId = "updUser";
+        String encoded = passwordEncoder.encode("pwUpd");
+        Team team = Team.DOOSAN_BEARS;
+        userRepository.save(
+                User.createLocalUser(loginId, encoded, "nickOld", team)
+        );
+
+        // when: updateProfile 호출
+        String newNick = "nickNew";
+        String newUrl  = "http://new.img";
+        String newMsg  = "새 상태 메시지";
+        userService.updateProfile(loginId, newNick, newUrl, newMsg);
+
+        // then: 변경 사항이 DB에 반영되었는지 확인
+        User updated = userRepository.findByLoginId(loginId).get();
+        assertEquals(newNick,       updated.getNickname());
+        assertEquals(newUrl,        updated.getProfileImageUrl());
+        assertEquals(newMsg,        updated.getStatusMessage());
+    }
+
+    @Test
+    void changePassword_호출시_DB에_존재하는_사용자의_비밀번호가_인코딩되어_변경된다() {
+        // given: 사용자 저장
+        String loginId = "cpUser";
+        String oldRaw   = "oldPw";
+        String oldHash  = passwordEncoder.encode(oldRaw);
+        Team team       = Team.LG_TWINS;
+        userRepository.save(
+                User.createLocalUser(loginId, oldHash, "nickCp", team)
+        );
+
+        // when: changePassword 호출
+        String newRaw = "newPw";
+        userService.changePassword(loginId, oldRaw, newRaw, newRaw);
+
+        // then: DB에 저장된 비밀번호가 인코딩된 새 값으로 바뀌었는지 확인
+        User updated = userRepository.findByLoginId(loginId).get();
+        assertTrue(passwordEncoder.matches(newRaw, updated.getPassword()),
+                "DB에 저장된 비밀번호가 새 비밀번호로 변경되지 않았습니다.");
+    }
+
+    @Test
+    void withdraw_호출시_DB에_존재하는_사용자의_상태가_WITHDRAWN으로_변경된다() {
+        // given: 사용자 저장
+        String loginId = "wdUser";
+        String encoded = passwordEncoder.encode("pwWd");
+        Team team = Team.KIA_TIGERS;
+        userRepository.save(
+                User.createLocalUser(loginId, encoded, "nickWd", team)
+        );
+
+        // when: withdraw 호출
+        userService.withdraw(loginId);
+
+        // then: DB에서 조회해보면 상태가 WITHDRAWN으로 변경되어야 한다
+        User updated = userRepository.findByLoginId(loginId).get();
+        assertEquals(Status.WITHDRAWN, updated.getStatus(),
+                "사용자 상태가 WITHDRAWN으로 변경되지 않았습니다.");
+        assertNotNull(updated.getDeletedAt(), "deletedAt 필드가 설정되지 않았습니다.");
+    }
+
+
 }

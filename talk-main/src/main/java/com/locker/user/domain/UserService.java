@@ -28,8 +28,13 @@ public class UserService {
     }
 
     public User findByLoginIdAndActiveOrDormant(String loginId) {
-        return userRepository.findByLoginIdAndStatusIn(loginId,List.of(Status.ACTIVE, Status.DORMANT))
-                .orElseThrow(UserException::userStatusInvalid);
+        User user = findByLoginId(loginId);
+
+        if (user.getStatus() != Status.ACTIVE && user.getStatus() != Status.DORMANT) {
+            throw UserException.userStatusInvalid();
+        }
+
+        return user;
     }
 
     @Transactional
