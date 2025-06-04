@@ -20,8 +20,20 @@ public class UserException extends CustomException {
         return new UserException(ErrorCode.PASSWORD_DO_NOT_MATCH);
     }
 
+    public static UserException oldPasswordNotMatch() {
+        return new UserException(ErrorCode.OLD_PASSWORD_NOT_MATCH);
+    }
+
+    public static UserException newPasswordNotMatch() {
+        return new UserException(ErrorCode.NEW_PASSWORD_NOT_MATCH);
+    }
+
     public static UserException userNotFound() {
         return new UserException(ErrorCode.USER_NOT_FOUND);
+    }
+
+    public static UserException userStatusInvalid() {
+        return new UserException(ErrorCode.USER_STATUS_INVALID);
     }
 
 }

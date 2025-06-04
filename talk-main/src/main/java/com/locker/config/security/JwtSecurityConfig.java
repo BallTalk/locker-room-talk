@@ -2,15 +2,12 @@ package com.locker.config.security;
 
 import com.locker.config.jwt.JwtAuthenticationFilter;
 import com.locker.config.jwt.JwtTokenProvider;
-import com.locker.auth.temp.JwtBlacklistService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.locker.auth.application.JwtBlacklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;

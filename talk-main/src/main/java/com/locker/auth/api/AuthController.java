@@ -1,0 +1,58 @@
+package com.locker.auth.api;
+
+import com.locker.auth.application.AuthService;
+import com.locker.auth.application.JwtBlacklistService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Tag(name = "Auth API", description = "인증 관련 API")
+public class AuthController {
+
+    private final AuthService authService;
+    private final JwtBlacklistService blacklistService;
+
+
+    @PostMapping("/login")
+    @Operation(
+            summary = "로그인",
+            description = "아이디/비밀번호로 로그인하고 JSON_WEB_TOKEN 을 발급받습니다."
+    )
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody @Valid LoginRequest req
+    ) {
+        LoginResponse resp = authService.login(req.toCommand());
+        return ResponseEntity.ok(resp);
+    }
+
+
+    @PostMapping("/logout")
+    @Operation(
+            summary     = "로그아웃",
+            description = "현재 요청의 JSON_WEB_TOKEN 을 Redis 블랙리스트에 등록하여 즉시 무효화하고, 클라이언트에 남아 있는 ACCESS_TOKEN 쿠키를 삭제합니다."
+    )
+    public ResponseEntity<Void> logout(
+            @RequestHeader(value="Authorization", required=false) String header,
+            HttpServletResponse response
+    ) {
+        authService.resolveToken(header)
+                .ifPresent(blacklistService::blacklist);
+
+        Cookie cookie = new Cookie("ACCESS_TOKEN", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        return ResponseEntity.noContent().build();
+    }
+
+}

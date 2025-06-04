@@ -1,10 +1,9 @@
 package com.locker.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.locker.auth.temp.JwtBlacklistService;
+import com.locker.auth.application.JwtBlacklistService;
 import com.locker.common.exception.model.ErrorCode;
 import com.locker.common.exception.model.ErrorResponse;
-import com.locker.common.exception.specific.AuthException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
