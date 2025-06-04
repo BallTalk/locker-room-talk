@@ -142,7 +142,6 @@ public class UserServiceUnitTest {
     @Test
     void findByLoginIdAndActiveOrDormant_호출시_존재하지않는_아이디면_userNotFound_예외가_발생한다() {
         // given
-        // findByLoginId(...)를 호출하면 Optional.empty() → userNotFound 예외가 터져야 합니다.
         when(userRepository.findByLoginId("noUser"))
                 .thenReturn(Optional.empty());
 
@@ -150,8 +149,6 @@ public class UserServiceUnitTest {
         UserException ex = assertThrows(UserException.class,
                 () -> userService.findByLoginIdAndActiveOrDormant("noUser"));
         assertEquals(ErrorCode.USER_NOT_FOUND, ex.getErrorCode());
-
-        // findByLoginId(...)가 한 번 호출되었는지 검증
         verify(userRepository).findByLoginId("noUser");
     }
 

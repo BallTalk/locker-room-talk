@@ -92,7 +92,6 @@ class AuthServiceTest {
         // given
         LoginCommand command = new LoginCommand(LOGIN_ID, RAW_PASSWORD);
 
-        // AuthenticationManager.authenticate()가 BadCredentialsException을 던지도록 설정
         when(authManager.authenticate(any()))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
 
