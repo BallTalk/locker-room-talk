@@ -1,9 +1,6 @@
 package com.locker.user.application;
 
-import com.locker.user.api.UserResponse;
-import com.locker.user.domain.User;
 import com.locker.user.domain.UserService;
-import com.locker.user.api.SignUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +18,19 @@ public class UserFacade {
         return userService.existsByLoginId(loginId);
     }
 
-    public UserInfo getUserByLoginId(String loginId) {
-        return UserInfo.from(userService.findByLoginId(loginId));
+    public ProfileInfo getUserByLoginId(String loginId) {
+        return ProfileInfo.from(userService.findByLoginId(loginId));
+    }
+
+    public void updateProfile(String loginId, UpdateProfileCommand command) {
+        userService.updateProfile(loginId, command.nickname(), command.profileImageUrl(), command.statusMessage());
+    }
+
+    public void changePassword(String loginId, ChangePasswordCommand command) {
+        userService.changePassword(loginId, command.oldPassword(), command.newPassword(), command.newPasswordConfirm());
+    }
+
+    public void withdraw(String loginId) {
+        userService.withdraw(loginId);
     }
 }

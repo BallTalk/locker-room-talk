@@ -103,10 +103,24 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    // 추가 예정
+    public void updateProfile(String nickname, String profileImageUrl, String statusMessage) {
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+        this.statusMessage = statusMessage;
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
+    public void withdraw(LocalDateTime when) {
+        this.status = Status.WITHDRAWN;
+        this.deletedAt = when;
+    }
+
     public void loginSucceeded(LocalDateTime now) {
         this.lastLoginAt = now;
-        this.loginFailCount = 0;               // 실패 카운트 리셋
+        this.loginFailCount = 0;
         if (this.status == Status.SUSPENDED) {
             this.status = Status.ACTIVE;       // 잠금 해제 로직이 있다면
         }
@@ -117,11 +131,6 @@ public class User extends BaseEntity {
         if (this.loginFailCount >= maxFailCount) {
             this.status = Status.SUSPENDED;    // 일정 실패 횟수 이상이면 일시 정지
         }
-    }
-
-    public void withdraw(LocalDateTime when) {
-        this.status = Status.WITHDRAWN;
-        this.deletedAt = when;
     }
 
 }

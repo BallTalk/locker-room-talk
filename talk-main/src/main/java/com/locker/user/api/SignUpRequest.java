@@ -14,7 +14,7 @@ public record SignUpRequest(
         @NotBlank(message = "LOGIN_ID_REQUIRED")
         @Size(min = 5, max = 20, message = "LOGIN_ID_LENGTH_INVALID")
         @Pattern(
-                regexp  = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]+$",
+                regexp  = "^[a-z0-9]{5,20}$",
                 message = "LOGIN_ID_PATTERN_INVALID"
         )
         String loginId,

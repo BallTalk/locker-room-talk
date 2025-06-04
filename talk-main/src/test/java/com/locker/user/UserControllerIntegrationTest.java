@@ -4,9 +4,8 @@ import com.locker.common.exception.handler.GlobalExceptionHandler;
 import com.locker.common.exception.specific.AuthException;
 import com.locker.config.security.CurrentUserArgumentResolver;
 import com.locker.user.api.UserController;
-import com.locker.user.api.UserResponse;
 import com.locker.user.application.UserFacade;
-import com.locker.user.application.UserInfo;
+import com.locker.user.application.ProfileInfo;
 import com.locker.user.domain.Team;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,7 +68,7 @@ class UserControllerIntegrationTest {
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        UserInfo dummyInfo = new UserInfo(
+        ProfileInfo dummyInfo = new ProfileInfo(
                 42L,
                 "test123",
                 "LOCAL",

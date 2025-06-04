@@ -2,18 +2,14 @@ package com.locker.user.api;
 
 import com.locker.config.security.CurrentUser;
 import com.locker.user.application.UserFacade;
-import com.locker.user.application.UserInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/user")
@@ -52,12 +48,62 @@ public class UserController {
             summary = "내 프로필 조회",
             description = "현재 로그인된 사용자의 정보를 반환합니다.(@CurrentUser)"
     )
-    public ResponseEntity<UserResponse> getMyProfile(
+    public ResponseEntity<MyProfileResponse> getMyProfile(
             @CurrentUser String loginId
     ) {
         return ResponseEntity.ok(
-                UserResponse.from(userFacade.getUserByLoginId(loginId))
+                MyProfileResponse.from(userFacade.getUserByLoginId(loginId))
         );
+    }
+
+    @PatchMapping("/me")
+    @Operation(
+            summary = "내 프로필 수정",
+            description = "닉네임, 프로필 이미지, 상태 메시지를 업데이트합니다."
+    )
+    public ResponseEntity<Void> updateMyProfile(
+            @CurrentUser String loginId,
+            @Valid @RequestBody UpdateProfileRequest req
+    ) {
+        userFacade.updateProfile(loginId, req.toCommand());
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{loginId}")
+    @Operation(
+            summary = "특정 유저 프로필 조회",
+            description = "다른 사용자의 공개 프로필(닉네임, 팀 등) 정보를 반환합니다."
+    )
+    public ResponseEntity<UserProfileResponse> getPublicProfile(
+            @PathVariable String loginId
+    ) {
+        return ResponseEntity.ok(
+                UserProfileResponse.from(userFacade.getUserByLoginId(loginId))
+        );
+    }
+
+    @PatchMapping("/me/password")
+    @Operation(
+            summary = "비밀번호 변경",
+            description = "기존 비밀번호 확인 후 새 비밀번호로 변경합니다."
+    )
+    public ResponseEntity<Void> changePassword(
+            @CurrentUser String loginId,
+            @Valid @RequestBody ChangePasswordRequest req
+    ) {
+        userFacade.changePassword(loginId, req.toCommand());
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/me")
+    @Operation(
+            summary = "회원 탈퇴",
+            description = "현재 로그인된 사용자를 탈퇴 처리합니다."
+    )
+    public ResponseEntity<Void> withdraw(@CurrentUser String loginId) {
+        userFacade.withdraw(loginId);
+        return ResponseEntity.noContent().build();
     }
 
 }
