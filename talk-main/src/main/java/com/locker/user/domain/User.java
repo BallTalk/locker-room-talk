@@ -39,8 +39,9 @@ public class User extends BaseEntity {
     @Column(name = "nickname", length = 20, nullable = false)
     private String nickname;
 
-    @Column(name = "favorite_team_id", length = 20, nullable = false)
-    private String favoriteTeamId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "favorite_team", length = 20, nullable = false)
+    private Team favoriteTeam;
 
     @Column(name = "profile_image_url", length = 255)
     private String profileImageUrl;
@@ -69,13 +70,13 @@ public class User extends BaseEntity {
             String loginId,
             String encodedPassword,
             String nickname,
-            String favoriteTeamId
+            Team favoriteTeam
     ) {
         return User.builder()
                 .loginId(loginId)
                 .password(encodedPassword)
                 .nickname(nickname)
-                .favoriteTeamId(favoriteTeamId)
+                .favoriteTeam(favoriteTeam)
                 .provider(Provider.LOCAL)
                 .status(Status.ACTIVE)
                 .loginFailCount(0)
@@ -86,8 +87,8 @@ public class User extends BaseEntity {
             Provider provider,
             String providerId,
             String nickname,
-            String favoriteTeamId,
-            String profileImageUrl    // ← 새로 추가
+            Team favoriteTeam,
+            String profileImageUrl
     ) {
         return User.builder()
                 .loginId(null)
@@ -95,17 +96,31 @@ public class User extends BaseEntity {
                 .provider(provider)
                 .providerId(providerId)
                 .nickname(nickname)
-                .favoriteTeamId(favoriteTeamId) // NOT_SET
+                .favoriteTeam(favoriteTeam)
                 .profileImageUrl(profileImageUrl)
                 .status(Status.ACTIVE)
                 .loginFailCount(0)
                 .build();
     }
 
-    // 추가 예정
+    public void updateProfile(String nickname, String profileImageUrl, String statusMessage) {
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+        this.statusMessage = statusMessage;
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
+    public void withdraw(LocalDateTime when) {
+        this.status = Status.WITHDRAWN;
+        this.deletedAt = when;
+    }
+
     public void loginSucceeded(LocalDateTime now) {
         this.lastLoginAt = now;
-        this.loginFailCount = 0;               // 실패 카운트 리셋
+        this.loginFailCount = 0;
         if (this.status == Status.SUSPENDED) {
             this.status = Status.ACTIVE;       // 잠금 해제 로직이 있다면
         }
@@ -116,11 +131,6 @@ public class User extends BaseEntity {
         if (this.loginFailCount >= maxFailCount) {
             this.status = Status.SUSPENDED;    // 일정 실패 횟수 이상이면 일시 정지
         }
-    }
-
-    public void withdraw(LocalDateTime when) {
-        this.status = Status.WITHDRAWN;
-        this.deletedAt = when;
     }
 
 }
