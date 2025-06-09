@@ -12,6 +12,10 @@ public class AuthException extends CustomException {
         return new AuthException(ErrorCode.AUTHENTICATION_FAILED);
     }
 
+    public static AuthException unauthenticatedUser() {
+        return new AuthException(ErrorCode.UNAUTHENTICATED_USER);
+    }
+
     /*public static AuthException tokenBlacklisted() {
         return new AuthException(ErrorCode.TOKEN_BLACKLISTED);
     }*/

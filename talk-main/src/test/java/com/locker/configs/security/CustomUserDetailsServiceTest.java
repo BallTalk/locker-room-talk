@@ -1,8 +1,8 @@
-package com.locker.configs.security;
+package com.locker.config.security;
 
 import com.locker.common.exception.specific.AuthException;
-import com.locker.common.exception.specific.UserException;
-import com.locker.config.security.CustomUserDetailsService;
+import com.locker.auth.application.CustomUserDetailsService;
+import com.locker.user.domain.Team;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class CustomUserDetailsServiceTest {
     @Test
     void 존재하는_로그인아이디일_경우_UserDetails가_반환된다() {
         // given
-        User u = User.createLocalUser("test1","pwhash","testnick1","LG");
+        User u = User.createLocalUser("test1","pwhash","testnick1", "01040005000", Team.LG_TWINS);
         when(repo.findByLoginId("test1")).thenReturn(Optional.of(u));
 
         // when

@@ -1,6 +1,6 @@
 package com.locker.configs.exception;
 
-import com.locker.auth.temp.AuthController;
+import com.locker.auth.api.AuthController;
 import com.locker.common.exception.handler.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,4 +1,4 @@
-package com.locker.user.api;
+package com.locker.auth.api;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -11,5 +11,5 @@ public record LoginResponse(
         String tokenType,
 
         @Schema(description = "만료 시간(UTC epoch millis)", example = "1716086400000")
-        Long expiresAt
+        Long expirationMs
 ) {}
