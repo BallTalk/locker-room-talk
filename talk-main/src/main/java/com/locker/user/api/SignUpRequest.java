@@ -1,8 +1,10 @@
 package com.locker.user.api;
 
 import com.locker.user.application.SignUpCommand;
+import com.locker.user.domain.Team;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -12,7 +14,7 @@ public record SignUpRequest(
         @NotBlank(message = "LOGIN_ID_REQUIRED")
         @Size(min = 5, max = 20, message = "LOGIN_ID_LENGTH_INVALID")
         @Pattern(
-                regexp  = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]+$",
+                regexp  = "^[a-z0-9]{5,20}$",
                 message = "LOGIN_ID_PATTERN_INVALID"
         )
         String loginId,
@@ -32,11 +34,19 @@ public record SignUpRequest(
         @Size(min = 5, max = 20, message = "NICKNAME_LENGTH_INVALID")
         String nickname,
 
-        @Schema(description = "응원 팀 ID (KBO 팀 코드)", example = "samsung")
-        @NotBlank(message = "FAVORITE_TEAM_ID_REQUIRED")
-        String favoriteTeamId
+        @Schema(description = "휴대폰 번호", example = "010-4000-5000")
+        @NotBlank(message = "PHONE_NUMBER_REQUIRED")
+        @Pattern(
+                regexp  = "^01[016789]-?\\d{3,4}-?\\d{4}$",
+                message = "PHONE_NUMBER_PATTERN_INVALID"
+        )
+        String phoneNumber,
+
+        @Schema(description = "응원 팀 (KBO)", example = "DOOSAN_BEARS")
+        @NotNull(message = "FAVORITE_TEAM_REQUIRED")
+        Team favoriteTeam
 ) {
         public SignUpCommand toCommand() {
-                return new SignUpCommand(loginId, password, confirmPassword, nickname, favoriteTeamId);
+                return new SignUpCommand(loginId, password, confirmPassword, nickname, phoneNumber, favoriteTeam);
         }
 }
