@@ -82,3 +82,11 @@ logging:
     org.hibernate.SQL: DEBUG
     org.springframework.boot.autoconfigure.sql.init.ScriptDatabaseInitializer: DEBUG
     org.springframework.jdbc.datasource.init.ScriptUtils: DEBUG
+
+coolsms:
+  api:
+    key: ${COOLSMS_API_KEY}
+    secret: ${COOLSMS_API_SECRET}
+    url: ${COOLSMS_URL}
+  sender :
+    phone-number: ${COOLSMS_SENDER_PHONE_NUMBER}
