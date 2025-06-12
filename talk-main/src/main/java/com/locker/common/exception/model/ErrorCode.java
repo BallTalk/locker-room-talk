@@ -1,6 +1,5 @@
 package com.locker.common.exception.model;
 
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -12,6 +11,7 @@ public enum ErrorCode {
     UNAUTHENTICATED_USER            (HttpStatus.UNAUTHORIZED, "인증된 사용자가 아닙니다."),
     TOKEN_BLACKLISTED               (HttpStatus.UNAUTHORIZED, "로그아웃된 토큰입니다."),
     USER_NOT_FOUND                  (HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    USER_NOT_FOUND_BY_PHONE         (HttpStatus.NOT_FOUND, "해당 휴대폰 번호로 등록된 사용자를 찾을 수 없습니다."),
     USER_STATUS_INVALID             (HttpStatus.FORBIDDEN, "로그인을 할 수 없는 계정상태입니다.(일시정지/영구밴/탈퇴)"),
     LOGIN_ID_REQUIRED               (HttpStatus.BAD_REQUEST, "로그인 아이디는 필수입니다."),
     LOGIN_ID_LENGTH_INVALID         (HttpStatus.BAD_REQUEST, "로그인 아이디는 5~20자여야 합니다."),
@@ -31,6 +31,12 @@ public enum ErrorCode {
     FAVORITE_TEAM_REQUIRED          (HttpStatus.BAD_REQUEST, "응원 팀 선택은 필수입니다."),
     PROFILE_IMAGE_URL_TOO_LONG      (HttpStatus.BAD_REQUEST, "프로필 이미지 URL 길이는 255자 이하여야 합니다."),
     STATUS_MESSAGE_TOO_LONG         (HttpStatus.BAD_REQUEST, "상태 메시지는 200자 이하여야 합니다."),
+
+    // SMS
+    SMS_PURPOSE_REQUIRED            (HttpStatus.BAD_REQUEST, "SMS 인증 용도는 필수입니다."),
+    SMS_SEND_FAILED                 (HttpStatus.INTERNAL_SERVER_ERROR, "SMS 전송에 실패했습니다."),
+    SMS_CODE_EXPIRED                (HttpStatus.BAD_REQUEST, "인증번호가 없거나 만료되었습니다."),
+    SMS_CODE_MISMATCH               (HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않습니다."),
 
     // COMMON
     INVALID_REQUEST                 (HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),

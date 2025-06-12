@@ -2,11 +2,13 @@ package com.locker.auth.application;
 
 import com.locker.auth.infra.sms.RedisSmsCodeRepository;
 import com.locker.auth.infra.sms.SmsSender;
+import com.locker.common.exception.specific.SmsVerificationException;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -16,30 +18,44 @@ public class SmsVerificationService {
     private final SmsSender smsSender;
     private final RedisSmsCodeRepository codeRepository;
 
-    /** 1) 인증번호 발송 */
-    public void sendVerificationCode(String phoneNumber) {
+    public void sendVerificationCode(SendSmsCommand sendSmsCommand) {
         String code = String.format("%06d", new SecureRandom().nextInt(1_000_000));
 
-        codeRepository.saveCode(phoneNumber, code, CODE_TTL_SECONDS);
+        codeRepository.saveCode(
+                sendSmsCommand.phoneNumber(),
+                sendSmsCommand.purpose(),
+                code,
+                CODE_TTL_SECONDS
+        );
 
-        SingleMessageSentResponse res = smsSender.sendOne(phoneNumber, code);
+        SingleMessageSentResponse res = smsSender.sendOne(
+                sendSmsCommand.phoneNumber(),
+                code
+        );
+
         String statusCode = res.getStatusCode();
-        if (!"2000".equals(statusCode)) { // 성공코드 = 2000
-            throw new IllegalStateException("SMS 전송 실패: status=" + statusCode);
+
+        if (!"2000".equals(statusCode)) { // coolSms success -> 2000 status
+            codeRepository.deleteCode(
+                    sendSmsCommand.phoneNumber(),
+                    sendSmsCommand.purpose()
+            );
+            throw SmsVerificationException.sendFailed();
         }
     }
 
-    /** 2) 인증번호 검증 */
-    public void verifyCode(String phoneNumber, String code) {
-        String saved = codeRepository.getCode(phoneNumber);
+    public void verifyCodeWithoutDelete(VerifySmsCommand verifySmsCommand) {
+        String saved = codeRepository.getCode(verifySmsCommand.phoneNumber(), verifySmsCommand.purpose());
         if (saved == null) {
-            throw new IllegalArgumentException("인증번호가 없거나 만료되었습니다.");
+            throw SmsVerificationException.codeExpired();
         }
-        if (!saved.equals(code)) {
-            throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+        if (!Objects.equals(saved, verifySmsCommand.code())) {
+            throw SmsVerificationException.codeMismatch();
         }
-        // 한번만 사용하도록 삭제
-        codeRepository.deleteCode(phoneNumber);
+    }
+
+    public void deleteCode(String phoneNumber, SmsPurpose purpose) {
+        codeRepository.deleteCode(phoneNumber, purpose);
     }
 
 }

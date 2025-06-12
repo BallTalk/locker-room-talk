@@ -38,7 +38,7 @@ public class SmsSender {
         Message message = new Message();
         message.setFrom(fromNumber);
         message.setTo(to);
-        message.setText("[locker-room-talk]\n 인증번호는" + verificationCode + "입니다");
+        message.setText("[locker-room-talk]\n인증번호는 " + verificationCode + " 입니다");
 
         return this.messageService.sendOne(new SingleMessageSendingRequest(message));
     }

@@ -1,6 +1,9 @@
 package com.locker.auth;
 
+import com.locker.auth.application.SendSmsCommand;
+import com.locker.auth.application.SmsPurpose;
 import com.locker.auth.application.SmsVerificationService;
+import com.locker.auth.application.VerifySmsCommand;
 import com.locker.auth.infra.sms.RedisSmsCodeRepository;
 import com.locker.auth.infra.sms.SmsSender;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
@@ -16,6 +19,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -48,50 +53,56 @@ public class SmsVerificationServiceIntegrationTest {
     static class TestConfig {
         @Bean
         public SmsSender smsSender() {
-            // 1) SmsSender 자체를 Mockito Mock으로 생성
+            // SmsSender를 Mock으로 등록해, sendOne이 항상 성공 응답을 반환하도록 함
             SmsSender mockSender = Mockito.mock(SmsSender.class);
-
-            // 2) 가짜 SingleMessageSentResponse도 Mockito Mock으로 생성
             SingleMessageSentResponse fakeResponse = Mockito.mock(SingleMessageSentResponse.class);
             Mockito.when(fakeResponse.getStatusCode()).thenReturn("2000");
-
-            // 3) sendOne 호출 시 항상 fakeResponse를 리턴하도록 설정
             Mockito.when(mockSender.sendOne(anyString(), anyString()))
                     .thenReturn(fakeResponse);
-
             return mockSender;
         }
     }
 
     @Test
-    void sendVerificationCode_호출시_코드가_Redis_에_저장된다() {
-        // Given
+    void sendVerificationCode_호출시_코드가_Redis에_저장되고_TTL이_세팅된다() {
+        // given
         String phone = "01012340000";
+        SmsPurpose purpose = SmsPurpose.SIGNUP;
+        SendSmsCommand command = new SendSmsCommand(phone, purpose);
 
-        // When
-        service.sendVerificationCode(phone);
+        // when
+        service.sendVerificationCode(command);
 
-        // Then
-        String key   = "sms:code" + phone;
-        String value = redisTemplate.opsForValue().get(key);
-        assertThat(value).matches("\\d{6}");
+        // then
+        String saved = repository.getCode(phone, purpose);
+        assertThat(saved).isNotNull();
+        assertThat(saved).matches("\\d{6}");  // 6자리 숫자
 
-        Long ttl = redisTemplate.getExpire(key);
+        String key = "sms:code:" + purpose.name() + ":" + phone;
+        Long ttl = redisTemplate.getExpire(key, TimeUnit.SECONDS);
         assertThat(ttl).isPositive().isLessThanOrEqualTo(300L);
     }
 
+
     @Test
-    void verifyCode_성공시_저장된_코드가_삭제된다() {
-        // Given
+    void verifyCodeWithoutDelete_성공시_코드는_삭제되지않고_deleteCode호출시_삭제된다() {
+        // given
         String phone = "01056780000";
-        String code  = "112233";
-        redisTemplate.opsForValue().set("sms:code" + phone, code);
+        SmsPurpose purpose = SmsPurpose.SIGNUP;
+        String code = "112233";
+        repository.saveCode(phone, purpose, code, 300L);
+        VerifySmsCommand command = new VerifySmsCommand(phone, code, purpose);
 
-        // When
-        service.verifyCode(phone, code);
 
-        // Then
-        assertThat(redisTemplate.hasKey("sms:code" + phone)).isFalse();
+        // when
+        service.verifyCodeWithoutDelete(command);
+
+        // then
+        String stillSaved = repository.getCode(phone, purpose);
+        assertThat(stillSaved).isEqualTo(code);
+
+        service.deleteCode(phone, purpose);
+        assertThat(repository.getCode(phone, purpose)).isNull();
     }
 
 }
