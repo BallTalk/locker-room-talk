@@ -5,6 +5,9 @@ import com.locker.user.application.UserFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -95,7 +98,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-
     @DeleteMapping("/me")
     @Operation(
             summary = "회원 탈퇴",
@@ -106,4 +108,37 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/find-id")
+    @Operation(
+            summary = "아이디 찾기",
+            description = "전화번호와 SMS 인증 코드를 받아 검증 후 매핑된 로그인 ID를 반환합니다."
+    )
+    public ResponseEntity<FindIdResponse> findIdWithSms(@Valid @RequestBody FindIdRequest req) {
+        String loginId = userFacade.findIdWithSms(req.toCommand());
+        return ResponseEntity.ok(FindIdResponse.from(loginId));
+    }
+
+    @GetMapping("/check/{loginId}")
+    @Operation(summary = "아이디 존재 확인",
+            description = "주어진 로그인 아이디가 가입된 계정인지 확인합니다. 비밀번호 재설정 과정에서 필요합니다.")
+    public ResponseEntity<Void> checkLoginId(
+            @PathVariable
+            @NotBlank(message = "LOGIN_ID_REQUIRED")
+            @Size(min = 5, max = 20, message = "LOGIN_ID_LENGTH_INVALID")
+            @Pattern(regexp = "^[a-z0-9]{5,20}$", message = "LOGIN_ID_PATTERN_INVALID")
+            String loginId
+    ) {
+        userFacade.getUserByLoginId(loginId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    @Operation(
+            summary = "비밀번호 재설정",
+            description = "전화번호와 SMS 인증 코드를 받아 검증 후 새 비밀번호로 재설정합니다."
+    )
+    public ResponseEntity<Void> resetPasswordWithSms(@Valid @RequestBody ResetPasswordRequest req) {
+        userFacade.resetPasswordWithSms(req.toCommand());
+        return ResponseEntity.ok().build();
+    }
 }

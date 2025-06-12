@@ -7,6 +7,7 @@ public record SignUpCommand(
         String password,
         String confirmPassword,
         String nickname,
-        Team favoriteTeam
-) {
-}
+        String phoneNumber,
+        Team favoriteTeam,
+        String verificationCode
+) {}

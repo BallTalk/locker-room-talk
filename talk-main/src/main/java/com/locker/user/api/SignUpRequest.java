@@ -34,11 +34,23 @@ public record SignUpRequest(
         @Size(min = 5, max = 20, message = "NICKNAME_LENGTH_INVALID")
         String nickname,
 
+        @Schema(description = "휴대폰 번호", example = "010-4000-5000")
+        @NotBlank(message = "PHONE_NUMBER_REQUIRED")
+        @Pattern(
+                regexp  = "^01[016789]-?\\d{3,4}-?\\d{4}$",
+                message = "PHONE_NUMBER_PATTERN_INVALID"
+        )
+        String phoneNumber,
+
         @Schema(description = "응원 팀 (KBO)", example = "DOOSAN_BEARS")
         @NotNull(message = "FAVORITE_TEAM_REQUIRED")
-        Team favoriteTeam
+        Team favoriteTeam,
+
+        @Schema(description = "SMS 인증 코드", example = "123456")
+        @NotBlank(message = "SMS_CODE_REQUIRED")
+        String verificationCode
 ) {
         public SignUpCommand toCommand() {
-                return new SignUpCommand(loginId, password, confirmPassword, nickname, favoriteTeam);
+                return new SignUpCommand(loginId, password, confirmPassword, nickname, phoneNumber, favoriteTeam, verificationCode);
         }
 }

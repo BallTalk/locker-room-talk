@@ -1,4 +1,4 @@
-package com.locker.config.exception;
+package com.locker.configs.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.locker.common.exception.handler.GlobalExceptionHandler;

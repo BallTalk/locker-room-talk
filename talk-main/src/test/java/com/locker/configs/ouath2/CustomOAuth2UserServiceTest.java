@@ -1,4 +1,4 @@
-package com.locker.config.ouath2;
+package com.locker.configs.ouath2;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

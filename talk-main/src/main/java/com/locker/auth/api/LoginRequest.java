@@ -1,6 +1,7 @@
 package com.locker.auth.api;
 
 import com.locker.auth.application.LoginCommand;
+import com.locker.user.application.SignUpCommand;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 

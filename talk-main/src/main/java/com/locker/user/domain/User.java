@@ -39,6 +39,9 @@ public class User extends BaseEntity {
     @Column(name = "nickname", length = 20, nullable = false)
     private String nickname;
 
+    @Column(name = "phone_number", length = 20, nullable = false, unique = true)
+    private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "favorite_team", length = 20, nullable = false)
     private Team favoriteTeam;
@@ -70,17 +73,23 @@ public class User extends BaseEntity {
             String loginId,
             String encodedPassword,
             String nickname,
+            String normalizedPhoneNumber,
             Team favoriteTeam
     ) {
         return User.builder()
                 .loginId(loginId)
                 .password(encodedPassword)
                 .nickname(nickname)
+                .phoneNumber(normalizedPhoneNumber)
                 .favoriteTeam(favoriteTeam)
                 .provider(Provider.LOCAL)
                 .status(Status.ACTIVE)
                 .loginFailCount(0)
                 .build();
+    }
+
+    public static String normalizePhone(String raw) {
+        return raw.replaceAll("\\D", "");
     }
 
     public static User createOAuthUser(

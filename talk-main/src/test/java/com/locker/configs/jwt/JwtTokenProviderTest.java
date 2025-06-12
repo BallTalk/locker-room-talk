@@ -1,5 +1,7 @@
-package com.locker.config.jwt;
+package com.locker.configs.jwt;
 
+import com.locker.config.jwt.JwtProperties;
+import com.locker.config.jwt.JwtTokenProvider;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
