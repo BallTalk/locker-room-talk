@@ -39,5 +39,9 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.findByProviderAndProviderId(provider, oauthId);
     }
 
+    @Override
+    public Optional<User> findByPhoneNumber(String normalizedPhoneNumber) {
+        return userJpaRepository.findByPhoneNumber(normalizedPhoneNumber);
+    }
 
 }
