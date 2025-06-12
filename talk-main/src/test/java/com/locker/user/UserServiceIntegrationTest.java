@@ -256,5 +256,50 @@ public class UserServiceIntegrationTest {
         assertNotNull(updated.getDeletedAt(), "deletedAt 필드가 설정되지 않았습니다.");
     }
 
+    @Test
+    void findLoginIdByPhone_호출시_존재하는번호면_loginId_를_정상적으로_반환한다() {
+        // given
+        String loginId = "initialFindUser";
+        String rawPhone = "010-7777-8888";
+        String normalized = User.normalizePhone(rawPhone);
+        String encodedPw = passwordEncoder.encode("initialPw");
+        Team team = Team.LG_TWINS;
+
+        User savedUser = User.createLocalUser(loginId, encodedPw, "nickFind", normalized, team);
+        userRepository.save(savedUser);
+
+        // when
+        String foundLoginId = userService.findLoginIdByPhone(rawPhone);
+
+        // then
+        assertEquals(loginId, foundLoginId, "저장된 전화번호로 findLoginIdByPhone 호출 시 loginId가 일치해야 한다");
+    }
+
+    @Test
+    void resetPasswordByPhone_정상요청이면_DB에_새비밀번호_인코딩되어_저장된다() {
+        // given
+        String loginId = "initialResetUser";
+        String rawPhone = "010-9999-0000";
+        String normalized = User.normalizePhone(rawPhone);
+        String oldRawPw = "oldPass";
+        String oldEncoded = passwordEncoder.encode(oldRawPw);
+        Team team = Team.KIA_TIGERS;
+
+        User savedUser = User.createLocalUser(loginId, oldEncoded, "nickReset", normalized, team);
+        userRepository.save(savedUser);
+
+        // when
+        String newRawPw = "newSecurePw";
+        // 신규 비밀번호와 확인 비밀번호가 동일한 경우로 보냄
+        userService.resetPasswordByPhone(rawPhone, newRawPw, newRawPw);
+
+        // then
+        User updated = userRepository.findByPhoneNumber(normalized)
+                .orElseThrow(() -> new AssertionError("resetPasswordByPhone 후에도 사용자가 조회되어야 한다."));
+        assertTrue(passwordEncoder.matches(newRawPw, updated.getPassword()),
+                "DB에 저장된 비밀번호가 새 비밀번호로 변경되지 않음.");
+        assertFalse(passwordEncoder.matches(oldRawPw, updated.getPassword()),
+                "이전 비밀번호가 여전히 일치하면 안된다.");
+    }
 
 }
