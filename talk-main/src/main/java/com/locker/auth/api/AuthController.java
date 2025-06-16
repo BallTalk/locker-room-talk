@@ -4,6 +4,8 @@ import com.locker.auth.application.AuthService;
 import com.locker.auth.application.JwtBlacklistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,10 +41,18 @@ public class AuthController {
                           "블랙리스트에는 해당 토큰의 만료 시점까지 저장됩니다."
     )
     public ResponseEntity<Void> logout(
-            @RequestHeader(value="Authorization", required=false) String header
-    ) {
+            @RequestHeader(value="Authorization", required=false) String header,
+            HttpServletResponse response
+    )  {
         authService.resolveToken(header)
                 .ifPresent(blacklistService::blacklist);
+
+        Cookie cookie = new Cookie("ACCESS_TOKEN", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
         return ResponseEntity.noContent().build();
     }
 
