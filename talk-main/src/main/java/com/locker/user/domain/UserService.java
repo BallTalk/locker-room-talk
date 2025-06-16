@@ -12,21 +12,23 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public boolean existsByLoginId(String loginId) {
         return userRepository.existsByLoginId(loginId);
     }
 
+    @Transactional(readOnly = true)
     public User findByLoginId(String loginId) {
         return userRepository.findByLoginId(loginId)
                 .orElseThrow(UserException::userNotFound);
     }
 
+    @Transactional(readOnly = true)
     public User findByLoginIdAndActiveOrDormant(String loginId) {
         User user = findByLoginId(loginId);
 
@@ -37,16 +39,16 @@ public class UserService {
         return user;
     }
 
-    @Transactional
-    public void signUp(String loginId, String password, String confirmPassword, String nickname, Team favoriteTeam) {
-
+    public void signUp(String loginId, String password, String confirmPassword, String nickname, String phoneNumber, Team favoriteTeam) {
         if (!password.equals(confirmPassword)) {
             throw UserException.passwordNotMatch();
         }
+
         validateLoginIdNotDuplicate(loginId);
 
         String encodedPassword = passwordEncoder.encode(password);
-        User user = User.createLocalUser(loginId, encodedPassword, nickname, favoriteTeam);
+        String normalizedPhoneNumber = User.normalizePhone(phoneNumber);
+        User user = User.createLocalUser(loginId, encodedPassword, nickname, normalizedPhoneNumber, favoriteTeam);
 
         userRepository.save(user);
     }
@@ -73,14 +75,35 @@ public class UserService {
         user.changePassword(encodedPassword);
     }
 
+    @Transactional
+    public void withdraw(String loginId) {
+        User user = findByLoginId(loginId);
+        user.withdraw(LocalDateTime.now());
+    }
+
+    public String findLoginIdByPhone(String phoneNumber) {
+        String normalizedPhoneNumber = User.normalizePhone(phoneNumber);
+        return userRepository.findByPhoneNumber(normalizedPhoneNumber)
+                .map(User::getLoginId)
+                .orElseThrow(UserException::userNotFoundByPhone);
+    }
+
+    public void resetPasswordByPhone(String phoneNumber, String newPassword, String newPasswordConfirm) {
+        if (!newPassword.equals(newPasswordConfirm)) {
+            throw UserException.newPasswordNotMatch();
+        }
+        String normalizedPhone = User.normalizePhone(phoneNumber);
+        User user = userRepository.findByPhoneNumber(normalizedPhone)
+                .orElseThrow(UserException::userNotFoundByPhone);
+
+        String encoded = passwordEncoder.encode(newPassword);
+        user.changePassword(encoded);
+    }
+
     private void validateLoginIdNotDuplicate(String loginId) {
         if (userRepository.existsByLoginId(loginId)) {
             throw UserException.loginIdDuplicate();
         }
     }
 
-    public void withdraw(String loginId) {
-        User user = findByLoginId(loginId);
-        user.withdraw(LocalDateTime.now());
-    }
 }

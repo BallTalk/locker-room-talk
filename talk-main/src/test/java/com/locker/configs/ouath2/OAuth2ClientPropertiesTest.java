@@ -1,4 +1,4 @@
-package com.locker.config.ouath2;
+package com.locker.configs.ouath2;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,12 +53,12 @@ class OAuth2ClientPropertiesTest {
         assertThat(kakao.getClientSecret())
                 .isEqualTo(expectedKakaoClientSecret);
         assertThat(kakao.getScope())
-                .containsExactlyInAnyOrder("profile_nickname", "profile_image");
+                .containsExactlyInAnyOrder("account_email", "profile_nickname", "profile_image");
         assertThat(kakao.getRedirectUri())
                 .isEqualTo("{baseUrl}/login/oauth2/code/{registrationId}");
         assertThat(kakao.getAuthorizationGrantType())
                 .isEqualTo("authorization_code");
         assertThat(kakao.getClientAuthenticationMethod())
-                .isEqualTo("client_secret_post");
+                .isEqualTo("post");
     }
 }

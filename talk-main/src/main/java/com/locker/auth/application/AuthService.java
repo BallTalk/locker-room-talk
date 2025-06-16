@@ -1,6 +1,5 @@
 package com.locker.auth.application;
 
-import com.locker.auth.api.LoginRequest;
 import com.locker.auth.api.LoginResponse;
 import com.locker.common.exception.specific.AuthException;
 import com.locker.config.jwt.JwtProperties;

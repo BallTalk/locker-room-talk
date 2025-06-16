@@ -1,4 +1,4 @@
-package com.locker.config.testcontainers;
+package com.locker.configs.testcontainers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;

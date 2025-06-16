@@ -4,8 +4,6 @@ import com.locker.auth.application.AuthService;
 import com.locker.auth.application.JwtBlacklistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,21 +35,14 @@ public class AuthController {
     @PostMapping("/logout")
     @Operation(
             summary     = "로그아웃",
-            description = "현재 요청의 JSON_WEB_TOKEN 을 Redis 블랙리스트에 등록하여 즉시 무효화하고, 클라이언트에 남아 있는 ACCESS_TOKEN 쿠키를 삭제합니다."
+            description = "현재 요청의 JSON_WEB_TOKEN 을 Redis 블랙리스트에 등록하여 즉시 무효화합니다. " +
+                          "블랙리스트에는 해당 토큰의 만료 시점까지 저장됩니다."
     )
     public ResponseEntity<Void> logout(
-            @RequestHeader(value="Authorization", required=false) String header,
-            HttpServletResponse response
+            @RequestHeader(value="Authorization", required=false) String header
     ) {
         authService.resolveToken(header)
                 .ifPresent(blacklistService::blacklist);
-
-        Cookie cookie = new Cookie("ACCESS_TOKEN", null);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-
         return ResponseEntity.noContent().build();
     }
 

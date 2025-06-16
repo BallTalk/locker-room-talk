@@ -1,4 +1,4 @@
-package com.locker.config.security;
+package com.locker.auth;
 
 import com.locker.auth.api.LoginResponse;
 import com.locker.auth.application.AuthService;
@@ -6,7 +6,6 @@ import com.locker.auth.application.LoginCommand;
 import com.locker.common.exception.specific.AuthException;
 import com.locker.config.jwt.JwtProperties;
 import com.locker.config.jwt.JwtTokenProvider;
-import com.locker.user.domain.Status;
 import com.locker.user.domain.Team;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserService;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthServiceTest {
+class AuthServiceUnitTest {
 
     @Mock
     private AuthenticationManager authManager;
@@ -63,6 +62,7 @@ class AuthServiceTest {
                 LOGIN_ID,
                 "hashedPwd",
                 "테스트닉네임",
+                "01040005000",
                 Team.DOOSAN_BEARS
         );
 

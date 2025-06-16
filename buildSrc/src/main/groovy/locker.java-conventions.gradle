@@ -50,6 +50,7 @@ dependencies {
     testImplementation "org.testcontainers:mysql:${libs.versions.testcontainers.get()}"
     testImplementation "org.testcontainers:junit-jupiter:${libs.versions.testcontainers.get()}"
 
+    implementation "net.nurigo:sdk:${libs.versions.coolsms.get()}"
 }
 
 jacocoTestReport {

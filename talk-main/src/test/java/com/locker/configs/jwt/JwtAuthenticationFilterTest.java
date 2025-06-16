@@ -1,6 +1,8 @@
-package com.locker.config.jwt;
+package com.locker.configs.jwt;
 
 import com.locker.auth.application.JwtBlacklistService;
+import com.locker.config.jwt.JwtAuthenticationFilter;
+import com.locker.config.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;

@@ -44,7 +44,7 @@ public class UserServiceUnitTest {
 
         // when & then
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp(loginId, pw, confirm, "nick", team));
+                () -> userService.signUp(loginId, pw, confirm, "nick", "01040005000", team));
         assertEquals(ErrorCode.PASSWORD_DO_NOT_MATCH, ex.getErrorCode());
         verifyNoInteractions(userRepository);
     }
@@ -57,7 +57,7 @@ public class UserServiceUnitTest {
 
         // when & then
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp("user1", "pw", "pw", "nick", team));
+                () -> userService.signUp("user1", "pw", "pw", "nick", "01040005000", team));
         assertEquals(ErrorCode.LOGIN_ID_DUPLICATE, ex.getErrorCode());
         verify(userRepository).existsByLoginId("user1");
         verifyNoMoreInteractions(userRepository);
@@ -71,7 +71,7 @@ public class UserServiceUnitTest {
         Team team = Team.KIA_TIGERS;
 
         // when
-        userService.signUp("user1", "pw", "pw", "nick", team);
+        userService.signUp("user1", "pw", "pw", "nick", "01040005000", team);
 
         // then
         verify(passwordEncoder).encode("pw");
@@ -81,6 +81,7 @@ public class UserServiceUnitTest {
         assertEquals("user1",           saved.getLoginId());
         assertEquals("ENCODED",         saved.getPassword());
         assertEquals("nick",            saved.getNickname());
+        assertEquals("01040005000",     saved.getPhoneNumber());
         assertEquals(team,              saved.getFavoriteTeam());
         assertEquals(Provider.LOCAL,    saved.getProvider());
         assertEquals(Status.ACTIVE,     saved.getStatus());
@@ -101,7 +102,7 @@ public class UserServiceUnitTest {
     @Test
     void findByLoginId_호출시_존재하는_아이디면_User_를_반환한다() {
         // given
-        User user = User.createLocalUser("userA", "hashA", "nickA", Team.SSG_LANDERS);
+        User user = User.createLocalUser("userA", "hashA", "nickA", "01040005000", Team.SSG_LANDERS);
         when(userRepository.findByLoginId("userA")).thenReturn(Optional.of(user));
 
         // when
@@ -127,7 +128,7 @@ public class UserServiceUnitTest {
     @Test
     void findByLoginIdAndActiveOrDormant_호출시_상태가_ACTIVE_면_User_를_반환한다() {
         // given
-        User activeUser = User.createLocalUser("userB", "hashB", "nickB", Team.LOTTE_GIANTS);
+        User activeUser = User.createLocalUser("userB", "hashB", "nickB", "01040005000", Team.LOTTE_GIANTS);
         when(userRepository.findByLoginId("userB"))
                 .thenReturn(Optional.of(activeUser));
 
@@ -155,7 +156,7 @@ public class UserServiceUnitTest {
     @Test
     void findByLoginIdAndActiveOrDormant_호출시_상태불일치면_userStatusInvalid_예외가_발생한다() {
         // given
-        User suspended = User.createLocalUser("userD", "hashD", "nickD", Team.KIA_TIGERS);
+        User suspended = User.createLocalUser("userD", "hashD", "nickD", "01040005000", Team.KIA_TIGERS);
         User spySuspended = spy(suspended);
         doReturn(Status.SUSPENDED).when(spySuspended).getStatus();
 
@@ -208,7 +209,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    void changePassword_호출시_기존비밀번호불일치면__oldPasswordNotMatch_예외가_발생한다() {
+    void changePassword_호출시_기존비밀번호가_불일치하면_oldPasswordNotMatch_예외가_발생한다() {
         // given
         User mockUser = mock(User.class);
         when(userRepository.findByLoginId("userF")).thenReturn(Optional.of(mockUser));
@@ -224,7 +225,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    void changePassword_호출시_신규비밀번호확인불일치면_newPasswordNotMatch_예외가_발생한다() {
+    void changePassword_호출시_신규비밀번호확인이_불일치하면_newPasswordNotMatch_예외가_발생한다() {
         // given
         User mockUser = mock(User.class);
         when(userRepository.findByLoginId("userG")).thenReturn(Optional.of(mockUser));
@@ -280,6 +281,90 @@ public class UserServiceUnitTest {
                 () -> userService.withdraw("noI"));
         assertEquals(ErrorCode.USER_NOT_FOUND, ex.getErrorCode());
         verify(userRepository).findByLoginId("noI");
+    }
+
+    @Test
+    void findLoginIdByPhone_호출시_존재하는번호면_loginId_를_반환한다() {
+        // given
+        String rawPhone = "010-1234-5678";
+        String normalized = User.normalizePhone(rawPhone);
+        User mockUser = User.createLocalUser("foundUser", "hash", "nick", normalized, Team.DOOSAN_BEARS);
+        when(userRepository.findByPhoneNumber(normalized)).thenReturn(Optional.of(mockUser));
+
+        // when
+        String result = userService.findLoginIdByPhone(rawPhone);
+
+        // then
+        assertEquals("foundUser", result);
+        verify(userRepository).findByPhoneNumber(normalized);
+    }
+
+    @Test
+    void findLoginIdByPhone_호출시_번호가_존재하지_않으면_userNotFoundByPhone_예외가_발생한다() {
+        // given
+        String rawPhone = "010-0000-0000";
+        String normalized = User.normalizePhone(rawPhone);
+        when(userRepository.findByPhoneNumber(normalized)).thenReturn(Optional.empty());
+
+        // when & then
+        UserException ex = assertThrows(UserException.class,
+                () -> userService.findLoginIdByPhone(rawPhone));
+        // UserException.userNotFoundByPhone()이 ErrorCode.USER_NOT_FOUND 혹은 별도 코드로 설정되어 있다면 그 코드로 검사
+        assertEquals(ErrorCode.USER_NOT_FOUND_BY_PHONE, ex.getErrorCode());
+        verify(userRepository).findByPhoneNumber(normalized);
+    }
+
+    @Test
+    void resetPasswordByPhone_호출시_신규비밀번호가_불일치하면_newPasswordNotMatch_예외가_발생한다() {
+        // given
+        String rawPhone = "010-1111-2222";
+        String normalized = User.normalizePhone(rawPhone);
+        String newPw = "password1";
+        String confirmPw = "password2";
+
+        // when & then
+        UserException ex = assertThrows(UserException.class,
+                () -> userService.resetPasswordByPhone(rawPhone, newPw, confirmPw));
+        assertEquals(ErrorCode.NEW_PASSWORD_NOT_MATCH, ex.getErrorCode());
+        verify(userRepository, never()).findByPhoneNumber(anyString());
+        verify(passwordEncoder, never()).encode(anyString());
+    }
+
+    @Test
+    void resetPasswordByPhone_호출시_번호가_존재하지_않으면__userNotFoundByPhone_예외가_발생한다() {
+        // given
+        String rawPhone = "010-3333-4444";
+        String normalized = User.normalizePhone(rawPhone);
+        String newPw = "newPass";
+        String confirmPw = "newPass";
+        when(userRepository.findByPhoneNumber(normalized)).thenReturn(Optional.empty());
+
+        // when & then
+        UserException ex = assertThrows(UserException.class,
+                () -> userService.resetPasswordByPhone(rawPhone, newPw, confirmPw));
+        assertEquals(ErrorCode.USER_NOT_FOUND_BY_PHONE, ex.getErrorCode());
+        verify(userRepository).findByPhoneNumber(normalized);
+        verify(passwordEncoder, never()).encode(anyString());
+    }
+
+    @Test
+    void resetPasswordByPhone_호출시_passwordEncoder_를_호출하고_user_changePassword_를_호출한다() {
+        // given
+        String rawPhone = "010-5555-6666";
+        String normalized = User.normalizePhone(rawPhone);
+        String newPw = "securePass";
+        String confirmPw = "securePass";
+        User mockUser = mock(User.class);
+        when(userRepository.findByPhoneNumber(normalized)).thenReturn(Optional.of(mockUser));
+        when(passwordEncoder.encode(newPw)).thenReturn("ENC_SECURE");
+
+        // when
+        userService.resetPasswordByPhone(rawPhone, newPw, confirmPw);
+
+        // then
+        verify(userRepository).findByPhoneNumber(normalized);
+        verify(passwordEncoder).encode(newPw);
+        verify(mockUser).changePassword("ENC_SECURE");
     }
 
 }
