@@ -25,12 +25,14 @@ public class UserFacade {
         );
         smsVerificationService.verifyCodeWithoutDelete(smsCmd);
 
-        userService.signUp(command.loginId(),
+        userService.signUp(
+                command.loginId(),
                 command.password(),
                 command.confirmPassword(),
                 command.nickname(),
                 command.phoneNumber(),
-                command.favoriteTeam());
+                command.favoriteTeam()
+        );
 
         smsVerificationService.deleteCode(command.phoneNumber(), SmsPurpose.SIGNUP);
     }
