@@ -15,4 +15,6 @@ public interface UserRepository {
     Optional<User> findByProviderAndProviderId(Provider provider, String oauthId);
 
     Optional<User> findByPhoneNumber(String normalizedPhoneNumber);
+
+    Optional<User> findById(Long userId);
 }

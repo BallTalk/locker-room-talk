@@ -44,4 +44,9 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.findByPhoneNumber(normalizedPhoneNumber);
     }
 
+    @Override
+    public Optional<User> findById(Long userId) {
+        return userJpaRepository.findById(userId);
+    }
+
 }

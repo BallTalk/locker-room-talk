@@ -99,8 +99,22 @@ public class User extends BaseEntity {
             Team favoriteTeam,
             String profileImageUrl
     ) {
+
+        String prefix = provider.name().toLowerCase();
+
+        int maxSuffix = 20 - prefix.length();
+        String suffix = UUID.randomUUID().toString()
+                .replace("-", "")
+                .substring(0, Math.min(maxSuffix, 12));
+
+        String loginId = prefix + suffix;
+
+        if (profileImageUrl == null) {
+            profileImageUrl = "default_profile_image_url";
+        }
+
         return User.builder()
-                .loginId(null)
+                .loginId(loginId)
                 .password(null)
                 .provider(provider)
                 .providerId(providerId)

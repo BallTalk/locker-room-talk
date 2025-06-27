@@ -27,28 +27,20 @@ public class AuthService {
 
     @Transactional
     public LoginResponse login(LoginCommand command) {
-
         try {
             Authentication auth = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(command.loginId(), command.password())
             );
-
             User user = userService.findByLoginIdAndActiveOrDormant(command.loginId());
             user.loginSucceeded(LocalDateTime.now());
 
-            String token = jwtProvider.createToken(auth);
+            String token = jwtProvider.createToken(auth.getName());
             long expirationMs = System.currentTimeMillis() + jwtProperties.getExpirationMs();
             return new LoginResponse(token, "Bearer", expirationMs);
 
         } catch (BadCredentialsException ex) {
             throw AuthException.authenticationFailed();
         }
-    }
-
-    public Optional<String> resolveToken(String header) {
-        return Optional.ofNullable(header)
-                .filter(h -> h.startsWith("Bearer "))
-                .map(h -> h.substring(7));
     }
 
 }
