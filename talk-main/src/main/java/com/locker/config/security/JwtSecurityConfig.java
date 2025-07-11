@@ -1,5 +1,6 @@
 package com.locker.config.security;
 
+import com.locker.common.filter.PreventReLoginFilter;
 import com.locker.config.jwt.JwtAuthenticationFilter;
 import com.locker.config.jwt.JwtTokenProvider;
 import com.locker.auth.application.JwtBlacklistService;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,6 +27,7 @@ public class JwtSecurityConfig {
     private final JwtTokenProvider tokenProvider;
     private final UserDetailsService userDetailsService;
     private final JwtBlacklistService blacklistService;
+    private final PreventReLoginFilter preventReLoginFilter;
 
     @Bean
     public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -34,12 +37,13 @@ public class JwtSecurityConfig {
         http
                 .securityMatcher("/api/**")
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(preventReLoginFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

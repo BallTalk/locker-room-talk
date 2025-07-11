@@ -13,6 +13,7 @@ public enum ErrorCode {
     USER_NOT_FOUND                  (HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     USER_NOT_FOUND_BY_PHONE         (HttpStatus.NOT_FOUND, "해당 휴대폰 번호로 등록된 사용자를 찾을 수 없습니다."),
     USER_STATUS_INVALID             (HttpStatus.FORBIDDEN, "로그인을 할 수 없는 계정상태입니다.(일시정지/영구밴/탈퇴)"),
+    USER_ALREADY_AUTHENTICATED      (HttpStatus.FORBIDDEN,"이미 로그인된 사용자는 로그인 할 수 없습니다."),
     LOGIN_ID_REQUIRED               (HttpStatus.BAD_REQUEST, "로그인 아이디는 필수입니다."),
     LOGIN_ID_LENGTH_INVALID         (HttpStatus.BAD_REQUEST, "로그인 아이디는 5~20자여야 합니다."),
     LOGIN_ID_PATTERN_INVALID        (HttpStatus.BAD_REQUEST, "로그인 아이디는 영문 소문자와 숫자 조합만 허용됩니다."),
