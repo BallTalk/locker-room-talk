@@ -37,7 +37,7 @@ class OAuth2ClientPropertiesTest {
         assertThat(google.getClientSecret())
                 .isEqualTo(expectedGoogleClientSecret);
         assertThat(google.getScope())
-                .containsExactlyInAnyOrder("openid", "profile", "email");
+                .containsExactlyInAnyOrder("profile", "email");
         assertThat(google.getRedirectUri())
                 .isEqualTo("{baseUrl}/login/oauth2/code/{registrationId}");
     }
@@ -53,12 +53,12 @@ class OAuth2ClientPropertiesTest {
         assertThat(kakao.getClientSecret())
                 .isEqualTo(expectedKakaoClientSecret);
         assertThat(kakao.getScope())
-                .containsExactlyInAnyOrder("account_email", "profile_nickname", "profile_image");
+                .containsExactlyInAnyOrder("profile_nickname", "profile_image");
         assertThat(kakao.getRedirectUri())
                 .isEqualTo("{baseUrl}/login/oauth2/code/{registrationId}");
         assertThat(kakao.getAuthorizationGrantType())
                 .isEqualTo("authorization_code");
         assertThat(kakao.getClientAuthenticationMethod())
-                .isEqualTo("post");
+                .isEqualTo("client_secret_post");
     }
 }

@@ -1,4 +1,4 @@
-package com.locker.config.security;
+package com.locker.configs.security;
 
 import com.locker.common.exception.specific.AuthException;
 import com.locker.auth.application.CustomUserDetailsService;

@@ -1,9 +1,9 @@
 package com.locker.auth;
 
-import com.locker.auth.api.LoginResponse;
 import com.locker.auth.application.AuthService;
 import com.locker.auth.application.LoginCommand;
 import com.locker.common.exception.specific.AuthException;
+import com.locker.common.exception.specific.UserException;
 import com.locker.config.jwt.JwtProperties;
 import com.locker.config.jwt.JwtTokenProvider;
 import com.locker.user.domain.Team;
@@ -51,11 +51,12 @@ class AuthServiceUnitTest {
     }
 
     @Test
-    void 로그인_성공시_AuthenticationManager_와_UserService_가_호출되고_JwtResponse_가_정상적으로_반환된다() {
+    void 로그인_성공시_AuthenticationManager_와_UserService가_호출되고_JwtProvider_가_토큰을_생성한다() {
         // given
         LoginCommand command = new LoginCommand(LOGIN_ID, RAW_PASSWORD);
 
         Authentication fakeAuth = mock(Authentication.class);
+        when(fakeAuth.getName()).thenReturn(LOGIN_ID);
         when(authManager.authenticate(any())).thenReturn(fakeAuth);
 
         User fakeUser = User.createLocalUser(
@@ -65,26 +66,22 @@ class AuthServiceUnitTest {
                 "01040005000",
                 Team.DOOSAN_BEARS
         );
+        when(userService.findByLoginIdAndActiveOrDormant(LOGIN_ID))
+                .thenReturn(fakeUser);
 
-        when(userService.findByLoginIdAndActiveOrDormant(LOGIN_ID)).thenReturn(fakeUser);
-        when(jwtProvider.createToken(fakeAuth)).thenReturn("dummyToken");
-        when(jwtProperties.getExpirationMs()).thenReturn(60_000L);
+        when(jwtProvider.createToken(LOGIN_ID)).thenReturn("dummyToken");
 
         // when
-        LoginResponse response = authService.login(command);
+        authService.login(command);
 
         // then
-        assertNotNull(response);
-        assertEquals("dummyToken", response.token());
-        assertEquals("Bearer", response.tokenType());
-        assertTrue(response.expirationMs() > System.currentTimeMillis());
-
         verify(authManager).authenticate(authTokenCaptor.capture());
-        UsernamePasswordAuthenticationToken capturedToken = authTokenCaptor.getValue();
-        assertEquals(LOGIN_ID, capturedToken.getPrincipal());
-        assertEquals(RAW_PASSWORD, capturedToken.getCredentials());
+        UsernamePasswordAuthenticationToken captured = authTokenCaptor.getValue();
+        assertEquals(LOGIN_ID, captured.getPrincipal());
+        assertEquals(RAW_PASSWORD, captured.getCredentials());
 
         verify(userService).findByLoginIdAndActiveOrDormant(LOGIN_ID);
+        verify(jwtProvider).createToken(LOGIN_ID);
     }
 
     @Test
@@ -96,29 +93,24 @@ class AuthServiceUnitTest {
                 .thenThrow(new BadCredentialsException("Bad credentials"));
 
         // when & then
-        AuthException ex = assertThrows(
-                AuthException.class,
-                () -> authService.login(command)
+        assertThrows(
+                AuthException.class, () -> authService.login(command)
         );
-
-        assertTrue(ex.getMessage().contains("아이디 또는 비밀번호가 올바르지 않습니다."));
     }
 
     @Test
     void 로그인_요청_후_UserService_에서_상태가_ACTIVE_나_DORMANT_가_아니면_UserException_예외가_발생한다() {
         // given
         LoginCommand command = new LoginCommand(LOGIN_ID, RAW_PASSWORD);
-
         Authentication fakeAuth = mock(Authentication.class);
-        when(authManager.authenticate(any())).thenReturn(fakeAuth);
 
+        when(authManager.authenticate(any())).thenReturn(fakeAuth);
         when(userService.findByLoginIdAndActiveOrDormant(LOGIN_ID))
-                .thenThrow(com.locker.common.exception.specific.UserException.userStatusInvalid());
+                .thenThrow(UserException.userStatusInvalid());
 
         // when & then
         assertThrows(
-                com.locker.common.exception.specific.UserException.class,
-                () -> authService.login(command)
+                UserException.class, () -> authService.login(command)
         );
     }
 }

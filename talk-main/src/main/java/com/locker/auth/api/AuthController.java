@@ -33,16 +33,15 @@ public class AuthController {
             summary = "로그인",
             description = "아이디/비밀번호로 로그인하고 JSON_WEB_TOKEN 을 HttpOnly 쿠키로 발급받습니다."
     )
-
-    public ResponseEntity<LoginResponse> login(
+    public ResponseEntity<Void> login(
             @RequestBody @Valid LoginRequest req,
             HttpServletResponse response
     ) {
-        LoginResponse loginResp = authService.login(req.toCommand());
+        String token = authService.login(req.toCommand());
 
-        Cookie cookie = new Cookie("ACCESS_TOKEN", loginResp.token());
+        Cookie cookie = new Cookie("ACCESS_TOKEN", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);  // HTTPS -> true
+        cookie.setSecure(false); // HTTPS -> true
         cookie.setPath("/");
         cookie.setMaxAge((int)(jwtProperties.getExpirationMs() / 1000));
         response.addCookie(cookie);
@@ -71,7 +70,7 @@ public class AuthController {
         Cookie deleteCookie = new Cookie("ACCESS_TOKEN", null);
         deleteCookie.setPath("/");
         deleteCookie.setHttpOnly(true);
-        deleteCookie.setSecure(true);   // 운영 환경이면 true
+        deleteCookie.setSecure(true);   // HTTPS -> true
         deleteCookie.setMaxAge(0);
         response.addCookie(deleteCookie);
 

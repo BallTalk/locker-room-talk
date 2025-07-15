@@ -38,7 +38,6 @@ public class CustomOAuth2UserService
         String registrationId = req.getClientRegistration().getRegistrationId();
         Provider provider      = Provider.valueOf(registrationId.toUpperCase());
 
-        // get the attribute name (configured in application.yml as user-name-attribute)
         String userIdAttr = req.getClientRegistration()
                 .getProviderDetails()
                 .getUserInfoEndpoint()
@@ -58,7 +57,9 @@ public class CustomOAuth2UserService
                     (Map<String,Object>) kakaoAccount.get("profile");
             nickname        = (String) profile.getOrDefault("nickname", "unknown");
             profileImageUrl = (String) profile.get("profile_image_url");
-        } else { // GOOGLE
+        }
+
+        else { // GOOGLE
             String email = oauth2User.getAttribute("email");
             nickname = (email != null) ? email.split("@")[0] : "unknown";
         }
@@ -68,7 +69,6 @@ public class CustomOAuth2UserService
                         ? profileImageUrl
                         : "default_profile_image_url";
 
-        // find or create the User
         userRepository
                 .findByProviderAndProviderId(provider, oauthId)
                 .orElseGet(() -> {
