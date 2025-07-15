@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -32,6 +33,16 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
             HttpServletResponse res,
             Authentication auth
     ) throws IOException, ServletException {
+
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        Cookie OAuthjsessionCookie = new Cookie("JSESSIONID", null);
+        OAuthjsessionCookie.setPath("/");
+        OAuthjsessionCookie.setMaxAge(0);
+        res.addCookie(OAuthjsessionCookie);
 
         OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) auth;
         OAuth2User oauth2User = oauth2Token.getPrincipal();

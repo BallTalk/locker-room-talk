@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class loginService {
     private final AuthenticationManager authManager;
     private final JwtTokenProvider jwtProvider;
-    private final JwtProperties jwtProperties;
     private final UserService userService;
 
     @Transactional

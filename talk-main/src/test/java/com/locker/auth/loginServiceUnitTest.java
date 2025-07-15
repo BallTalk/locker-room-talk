@@ -1,6 +1,6 @@
 package com.locker.auth;
 
-import com.locker.auth.application.AuthService;
+import com.locker.auth.application.loginService;
 import com.locker.auth.application.LoginCommand;
 import com.locker.common.exception.specific.AuthException;
 import com.locker.common.exception.specific.UserException;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthServiceUnitTest {
+class loginServiceUnitTest {
 
     @Mock
     private AuthenticationManager authManager;
@@ -38,7 +38,7 @@ class AuthServiceUnitTest {
     private UserService userService;
 
     @InjectMocks
-    private AuthService authService;
+    private loginService authService;
 
     @Captor
     private ArgumentCaptor<UsernamePasswordAuthenticationToken> authTokenCaptor;
