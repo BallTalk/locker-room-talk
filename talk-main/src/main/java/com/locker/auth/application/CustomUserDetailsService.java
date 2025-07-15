@@ -7,6 +7,7 @@ import com.locker.user.domain.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -18,11 +19,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String subject) {
         User user = userRepository.findByLoginId(subject)
                 .orElseThrow(AuthException::authenticationFailed);
 
-        String password = user.getPassword() != null ? user.getPassword() : ""; // oauth = null / username,password = not null
+        String password = user.getPassword() != null ? user.getPassword() : ""; // oauth = null
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getLoginId())

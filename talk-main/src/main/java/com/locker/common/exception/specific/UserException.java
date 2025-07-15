@@ -40,4 +40,8 @@ public class UserException extends CustomException {
         return new UserException(ErrorCode.USER_STATUS_INVALID);
     }
 
+    public static UserException userNotFoundByProvider() {
+        return new UserException(ErrorCode.USER_NOT_FOUND);
+    }
+
 }

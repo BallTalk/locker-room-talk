@@ -1,5 +1,6 @@
 package com.locker.config.jwt;
 
+import com.locker.common.exception.specific.UserException;
 import com.locker.user.domain.Provider;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
@@ -35,17 +36,16 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
         OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) auth;
         OAuth2User oauth2User = oauth2Token.getPrincipal();
 
-        String registrationId = oauth2Token.getAuthorizedClientRegistrationId(); // "google" or "kakao"
+        String registrationId = oauth2Token.getAuthorizedClientRegistrationId(); // google / kakao
         Provider provider = Provider.valueOf(registrationId.toUpperCase());
 
-        String providerId = oauth2User.getName();  // sub 또는 id
+        String providerId = oauth2User.getName();  // sub / id
         User user = userRepository
                 .findByProviderAndProviderId(provider, providerId)
-                .orElseThrow(() -> new IllegalStateException("OAuth 로그인 후 DB에 유저가 없음"));
+                .orElseThrow(UserException::userNotFoundByProvider);
 
         String jwt = tokenProvider.createToken(user.getLoginId());
 
-        // JWT 토큰의 만료 시간 설정
         int maxAgeSeconds = (int) (jwtProperties.getExpirationMs() / 1000);
         Cookie cookie = new Cookie("ACCESS_TOKEN", jwt);
         cookie.setHttpOnly(true);
@@ -54,7 +54,6 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
         cookie.setMaxAge(maxAgeSeconds);
         res.addCookie(cookie);
 
-        // 리디렉션 및 종료 처리
         res.setContentType("text/html;charset=UTF-8");
         PrintWriter out = res.getWriter();
         out.println("<!DOCTYPE html>");

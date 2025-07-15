@@ -11,6 +11,7 @@ public enum ErrorCode {
     UNAUTHENTICATED_USER            (HttpStatus.UNAUTHORIZED, "인증된 사용자가 아닙니다."),
     TOKEN_BLACKLISTED               (HttpStatus.UNAUTHORIZED, "로그아웃된 토큰입니다."),
     USER_NOT_FOUND                  (HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    USER_NOT_FOUND_BY_PROVIDER      (HttpStatus.NOT_FOUND, "OAuth 사용자 정보를 찾을 수 없습니다."),
     USER_NOT_FOUND_BY_PHONE         (HttpStatus.NOT_FOUND, "해당 휴대폰 번호로 등록된 사용자를 찾을 수 없습니다."),
     USER_STATUS_INVALID             (HttpStatus.FORBIDDEN, "로그인을 할 수 없는 계정상태입니다.(일시정지/영구밴/탈퇴)"),
     USER_ALREADY_AUTHENTICATED      (HttpStatus.FORBIDDEN,"이미 로그인된 사용자는 로그인 할 수 없습니다."),
