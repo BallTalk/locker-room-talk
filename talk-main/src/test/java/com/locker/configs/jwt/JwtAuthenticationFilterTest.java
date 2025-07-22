@@ -4,6 +4,7 @@ import com.locker.auth.application.JwtBlacklistService;
 import com.locker.config.jwt.JwtAuthenticationFilter;
 import com.locker.config.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,8 +47,8 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void Authorization_헤더_없이_사용자의_요청_시_체인만_호출되고_인증정보는_미설정된다() throws Exception {
-        // Given: Authorization 헤더 없음
+    void ACCESS_TOKEN_쿠키_없이_요청하면_체인만_호출되고_인증정보는_미설정된다() throws Exception {
+        // Given
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
 
@@ -60,11 +61,12 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void 사용자의_요청_시_유효하지_않은_JSON_WEB_TOKEN_이면_인증되지_않는다() throws Exception {
-        // Given: 잘못된 토큰
+    void 사용자의_요청_시_ACCESS_TOKEN_쿠키에_유효하지_않은_JWT가_들어있으면_인증되지_않는다() throws Exception {
+        // Given
         when(tokenProvider.validateToken("bad")).thenReturn(false);
         MockHttpServletRequest req = new MockHttpServletRequest();
-        req.addHeader("Authorization", "Bearer bad");
+
+        req.setCookies(new Cookie("ACCESS_TOKEN", "bad"));
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         // When
@@ -77,12 +79,12 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void 블랙리스트된_토큰이면_401과_TOKEN_BLACKLISTED_바디가_반환된다() throws Exception {
-        // Given: 블랙리스트에 등록된 토큰
+        // Given
         String rawJwt = "blacklisted.token";
         when(blacklistService.isBlacklisted(rawJwt)).thenReturn(true);
 
         MockHttpServletRequest req = new MockHttpServletRequest();
-        req.addHeader("Authorization", "Bearer " + rawJwt);
+        req.setCookies(new Cookie("ACCESS_TOKEN", rawJwt));
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         // When
@@ -99,8 +101,8 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void 사용자의_요청_시_유효한_JSON_WEB_TOKEN_이_검증_되면_SecurityContext_에_Authentication_이_세팅된다() throws Exception {
-        // Given: 유효한 토큰과 사용자 정보
+    void 사용자의_요청_시_ACCESS_TOKEN_쿠키에_유효한_JWT가_검증되면_SecurityContext에_Authentication이_세팅된다() throws Exception {
+        // Given
         when(tokenProvider.validateToken("good")).thenReturn(true);
         when(tokenProvider.getUsername("good")).thenReturn("test1");
         UserDetails ud = User.withUsername("test1")
@@ -108,14 +110,15 @@ class JwtAuthenticationFilterTest {
                 .authorities("ROLE_USER")
                 .build();
         when(userDetailsService.loadUserByUsername("test1")).thenReturn(ud);
+
         MockHttpServletRequest req = new MockHttpServletRequest();
-        req.addHeader("Authorization", "Bearer good");
+        req.setCookies(new Cookie("ACCESS_TOKEN", "good"));
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         // When
         filter.doFilter(req, res, chain);
 
-        // Then: 인증 객체가 SecurityContext에 설정되고, 체인 호출
+        // Then
         verify(chain).doFilter(req, res);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         assertNotNull(auth);
@@ -125,16 +128,13 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void Bearer_접두어를_사용할때_validateToken에_prefix_없이_순수_토큰이_전달된다() throws Exception {
-        // 스프링 시큐리티나 여러 API 서버 프레임워크들이
-        // AuthenticationFilter 에서 Authorization 헤더를 파싱할 때
-        // Bearer 로 시작하면 JWT 검증 로직 실행 이라고 기본 구현을 제공
+    void ACCESS_TOKEN_쿠키값이_validateToken에_전달된다() throws Exception {
         // Given
         String rawJwt = "jwt.token.value";
         when(tokenProvider.validateToken(rawJwt)).thenReturn(false);
 
         MockHttpServletRequest req = new MockHttpServletRequest();
-        req.addHeader("Authorization", "Bearer " + rawJwt);
+        req.setCookies(new Cookie("ACCESS_TOKEN", rawJwt));
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         // When

@@ -1,11 +1,18 @@
 package com.locker.config.jwt;
 
+import com.locker.common.exception.specific.UserException;
+import com.locker.user.domain.Provider;
+import com.locker.user.domain.User;
+import com.locker.user.domain.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +25,7 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider tokenProvider;
     private final JwtProperties jwtProperties;
+    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(
@@ -25,7 +33,29 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
             HttpServletResponse res,
             Authentication auth
     ) throws IOException, ServletException {
-        String jwt = tokenProvider.createToken(auth);
+
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        Cookie OAuthjsessionCookie = new Cookie("JSESSIONID", null);
+        OAuthjsessionCookie.setPath("/");
+        OAuthjsessionCookie.setMaxAge(0);
+        res.addCookie(OAuthjsessionCookie);
+
+        OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) auth;
+        OAuth2User oauth2User = oauth2Token.getPrincipal();
+
+        String registrationId = oauth2Token.getAuthorizedClientRegistrationId(); // google / kakao
+        Provider provider = Provider.valueOf(registrationId.toUpperCase());
+
+        String providerId = oauth2User.getName();  // sub / id
+        User user = userRepository
+                .findByProviderAndProviderId(provider, providerId)
+                .orElseThrow(UserException::userNotFoundByProvider);
+
+        String jwt = tokenProvider.createToken(user.getLoginId());
 
         int maxAgeSeconds = (int) (jwtProperties.getExpirationMs() / 1000);
         Cookie cookie = new Cookie("ACCESS_TOKEN", jwt);
@@ -48,6 +78,5 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
         out.println("</body>");
         out.println("</html>");
         out.flush();
-
     }
 }

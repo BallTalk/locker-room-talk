@@ -85,14 +85,13 @@ public class SmsVerificationServiceIntegrationTest {
 
 
     @Test
-    void verifyCodeWithoutDelete_성공시_코드는_삭제되지않고_deleteCode호출시_삭제된다() {
+    void verifyCodeWithoutDelete_성공시_코드는_삭제되지않고_deleteCode_호출시_삭제된다() {
         // given
         String phone = "01056780000";
         SmsPurpose purpose = SmsPurpose.SIGNUP;
         String code = "112233";
         repository.saveCode(phone, purpose, code, 300L);
         VerifySmsCommand command = new VerifySmsCommand(phone, code, purpose);
-
 
         // when
         service.verifyCodeWithoutDelete(command);

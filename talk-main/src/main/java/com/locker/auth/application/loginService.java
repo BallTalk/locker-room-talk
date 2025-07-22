@@ -1,6 +1,5 @@
 package com.locker.auth.application;
 
-import com.locker.auth.api.LoginResponse;
 import com.locker.common.exception.specific.AuthException;
 import com.locker.config.jwt.JwtProperties;
 import com.locker.config.jwt.JwtTokenProvider;
@@ -15,40 +14,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class loginService {
     private final AuthenticationManager authManager;
     private final JwtTokenProvider jwtProvider;
-    private final JwtProperties jwtProperties;
     private final UserService userService;
 
     @Transactional
-    public LoginResponse login(LoginCommand command) {
-
+    public String login(LoginCommand command) {
         try {
             Authentication auth = authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(command.loginId(), command.password())
+                    new UsernamePasswordAuthenticationToken(
+                            command.loginId(), command.password()
+                    )
             );
-
             User user = userService.findByLoginIdAndActiveOrDormant(command.loginId());
             user.loginSucceeded(LocalDateTime.now());
 
-            String token = jwtProvider.createToken(auth);
-            long expirationMs = System.currentTimeMillis() + jwtProperties.getExpirationMs();
-            return new LoginResponse(token, "Bearer", expirationMs);
-
+            return jwtProvider.createToken(auth.getName());
         } catch (BadCredentialsException ex) {
             throw AuthException.authenticationFailed();
         }
     }
-
-    public Optional<String> resolveToken(String header) {
-        return Optional.ofNullable(header)
-                .filter(h -> h.startsWith("Bearer "))
-                .map(h -> h.substring(7));
-    }
-
 }

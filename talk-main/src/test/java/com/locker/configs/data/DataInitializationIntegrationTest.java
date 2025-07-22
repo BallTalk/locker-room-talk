@@ -28,7 +28,7 @@ class DataInitializationIntegrationTest {
                 Integer.class);
         assertThat(tables).isOne();
 
-        // data.sql 에서 INSERT 한 레코드가 들어있는지 확인 (nickname 값 일치)
+        // data.sql 에서 INSERT 한 레코드가 들어있는지 확인
         String expectedNickname = "테스트유저1";
         Integer count = jdbc.queryForObject(
                 "SELECT COUNT(*) FROM `user` WHERE nickname = ?",

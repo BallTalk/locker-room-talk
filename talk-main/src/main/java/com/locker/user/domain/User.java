@@ -95,13 +95,15 @@ public class User extends BaseEntity {
     public static User createOAuthUser(
             Provider provider,
             String providerId,
+            String loginId,
+            String hashedPassword,
             String nickname,
             Team favoriteTeam,
             String profileImageUrl
     ) {
         return User.builder()
-                .loginId(null)
-                .password(null)
+                .loginId(loginId)
+                .password(hashedPassword)
                 .provider(provider)
                 .providerId(providerId)
                 .nickname(nickname)
@@ -131,14 +133,14 @@ public class User extends BaseEntity {
         this.lastLoginAt = now;
         this.loginFailCount = 0;
         if (this.status == Status.SUSPENDED) {
-            this.status = Status.ACTIVE;       // 잠금 해제 로직이 있다면
+            this.status = Status.ACTIVE;
         }
     }
 
     public void loginFailed(int maxFailCount) {
         this.loginFailCount++;
         if (this.loginFailCount >= maxFailCount) {
-            this.status = Status.SUSPENDED;    // 일정 실패 횟수 이상이면 일시 정지
+            this.status = Status.SUSPENDED;
         }
     }
 
