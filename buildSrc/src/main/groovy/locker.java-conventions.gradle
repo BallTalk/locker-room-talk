@@ -39,18 +39,14 @@ dependencies {
 
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    implementation "net.nurigo:sdk:${libs.versions.coolsms.get()}"
+
     compileOnly "org.projectlombok:lombok:${libs.versions.lombok.get()}"
     annotationProcessor "org.projectlombok:lombok:${libs.versions.lombok.get()}"
-    testCompileOnly "org.projectlombok:lombok:${libs.versions.lombok.get()}"
-    testAnnotationProcessor "org.projectlombok:lombok:${libs.versions.lombok.get()}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation "org.testcontainers:mysql:${libs.versions.testcontainers.get()}"
-    testImplementation "org.testcontainers:junit-jupiter:${libs.versions.testcontainers.get()}"
-
-    implementation "net.nurigo:sdk:${libs.versions.coolsms.get()}"
+    testCompileOnly "org.projectlombok:lombok:${libs.versions.lombok.get()}"
+    testAnnotationProcessor "org.projectlombok:lombok:${libs.versions.lombok.get()}"
 }
 
 jacocoTestReport {

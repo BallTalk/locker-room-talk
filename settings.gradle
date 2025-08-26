@@ -1,2 +1,2 @@
 rootProject.name = 'locker-room-talk'
-include('talk-main')
+include('app', 'account', 'common', 'test-support')

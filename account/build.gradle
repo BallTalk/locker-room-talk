@@ -1,0 +1,20 @@
+plugins {
+    id 'locker.java-conventions'
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['auth/src/main/java', 'user/src/main/java']
+        resources.srcDirs = ['auth/src/main/resources', 'user/src/main/resources']
+    }
+    test {
+        java.srcDirs = ['auth/src/test/java', 'user/src/test/java']
+        resources.srcDirs = ['auth/src/test/resources', 'user/src/test/resources']
+    }
+}
+
+dependencies {
+    implementation project(':common')
+    testImplementation project(':app')
+    testImplementation testFixtures(project(':test-support'))
+}
