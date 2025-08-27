@@ -8,6 +8,7 @@ CREATE TABLE `user` (
                         provider_id        VARCHAR(100)  NULL                COMMENT 'OAuth 공급자 ID',
                         password           VARCHAR(255)  NULL                COMMENT '패스워드(소셜로그인 = null)',
                         nickname           VARCHAR(20)   NOT NULL            COMMENT '닉네임',
+                        phone_number       VARCHAR(11)   NULL UNIQUE     COMMENT '휴대폰 번호 (하이픈(-) 제외 후 저장)',
                         favorite_team      VARCHAR(20)   NOT NULL            COMMENT '유저 응원팀 (Team enum)',
                                                          CHECK (favorite_team IN (
                                                                                  'NOT_SET',
@@ -24,14 +25,14 @@ CREATE TABLE `user` (
                                                         )),
                         profile_image_url  VARCHAR(255)  NULL                COMMENT '프로필 이미지 URL',
                         status_message     VARCHAR(200)  NULL                COMMENT '한 줄 상태 메시지',
-                        status             VARCHAR(10)  NOT NULL DEFAULT 'ACTIVE' COMMENT '상태',
-                                                        CHECK (status IN (
+                        status             VARCHAR(10)   NOT NULL DEFAULT 'ACTIVE' COMMENT '상태',
+                                                         CHECK (status IN (
                                                                       'ACTIVE',
                                                                       'SUSPENDED',
                                                                       'BANNED',
                                                                       'WITHDRAWN',
                                                                       'DORMANT'
-                                                        )),
+                                                         )),
                         last_login_at      DATETIME      NULL                COMMENT '마지막 로그인 날짜',
                         login_fail_count   INT           NOT NULL DEFAULT 0  COMMENT '로그인 실패 횟수',
                         deleted_at         DATETIME      NULL                COMMENT '탈퇴 시 탈퇴 날짜',

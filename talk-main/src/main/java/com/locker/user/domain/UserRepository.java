@@ -1,6 +1,5 @@
 package com.locker.user.domain;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
@@ -14,4 +13,8 @@ public interface UserRepository {
     Optional<User> findByLoginId(String loginId);
 
     Optional<User> findByProviderAndProviderId(Provider provider, String oauthId);
+
+    Optional<User> findByPhoneNumber(String normalizedPhoneNumber);
+
+    Optional<User> findById(Long userId);
 }

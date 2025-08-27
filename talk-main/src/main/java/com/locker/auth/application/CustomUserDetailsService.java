@@ -6,8 +6,8 @@ import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -19,17 +19,22 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String loginId)
-            throws UsernameNotFoundException {
-        User user = userRepository.findByLoginId(loginId)
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String subject) {
+        User user = userRepository.findByLoginId(subject)
                 .orElseThrow(AuthException::authenticationFailed);
+
+        String password = user.getPassword() != null ? user.getPassword() : ""; // oauth = null
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getLoginId())
-                .password(user.getPassword())
-                .disabled(user.getStatus() != Status.ACTIVE)
+                .password(password)
                 .authorities("ROLE_USER")
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(user.getStatus() != Status.ACTIVE)
                 .build();
-
     }
 }
+

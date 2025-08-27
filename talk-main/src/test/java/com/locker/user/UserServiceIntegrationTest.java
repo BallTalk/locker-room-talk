@@ -29,8 +29,9 @@ public class UserServiceIntegrationTest {
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
-    void cleanUp() {
+    void setUp() {
         userRepository.deleteAll();
+
     }
 
     @Test
@@ -39,10 +40,11 @@ public class UserServiceIntegrationTest {
         String loginId = "intgUser";
         String pw      = "password";
         String nick    = "intgNick";
+        String pn      = "01040005000";
         Team team      = Team.DOOSAN_BEARS;
 
         // when
-        userService.signUp(loginId, pw, pw, nick, team);
+        userService.signUp(loginId, pw, pw, nick, pn, team);
 
         // then
         assertTrue(userService.existsByLoginId(loginId));
@@ -50,8 +52,9 @@ public class UserServiceIntegrationTest {
         User saved = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new AssertionError("User가 저장되지 않았습니다."));
         assertEquals(loginId,    saved.getLoginId());
-        assertNotEquals(pw,       saved.getPassword()); // PasswordEncoder 적용 여부 확인
+        assertNotEquals(pw,       saved.getPassword()); // 암호화해서 일치하지 않는 것을 검증
         assertEquals(nick,        saved.getNickname());
+        assertEquals(pn,          saved.getPhoneNumber());
         assertEquals(team,        saved.getFavoriteTeam());
     }
 
@@ -62,11 +65,12 @@ public class UserServiceIntegrationTest {
         String pw1     = "pw1";
         String pw2     = "pw2";
         String nick    = "nick";
+        String pn      = "01040005000";
         Team team      = Team.LG_TWINS;
 
         // when & then
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp(loginId, pw1, pw2, nick, team)
+                () -> userService.signUp(loginId, pw1, pw2, nick, pn, team)
         );
         assertEquals(ErrorCode.PASSWORD_DO_NOT_MATCH, ex.getErrorCode());
     }
@@ -78,13 +82,13 @@ public class UserServiceIntegrationTest {
         String encoded = passwordEncoder.encode("init");
         Team existingTeam = Team.KIA_TIGERS;
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nick", existingTeam)
+                User.createLocalUser(loginId, encoded, "nick", "01040005000", existingTeam)
         );
 
         // when & then
         Team newTeam = Team.SSG_LANDERS;
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp(loginId, "pw", "pw", "nick2", newTeam)
+                () -> userService.signUp(loginId, "pw", "pw", "nick2", "01040005000", newTeam)
         );
         assertEquals(ErrorCode.LOGIN_ID_DUPLICATE, ex.getErrorCode());
     }
@@ -96,7 +100,7 @@ public class UserServiceIntegrationTest {
         String encoded = passwordEncoder.encode("pw");
         Team existingTeam = Team.LG_TWINS;
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nick", existingTeam)
+                User.createLocalUser(loginId, encoded, "nick", "01040005000", existingTeam)
         );
 
         // when
@@ -122,7 +126,7 @@ public class UserServiceIntegrationTest {
         String encoded = passwordEncoder.encode("pw123");
         Team team = Team.LG_TWINS;
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickFind", team)
+                User.createLocalUser(loginId, encoded, "nickFind","01040005000", team)
         );
 
         // when
@@ -140,7 +144,7 @@ public class UserServiceIntegrationTest {
         String encoded = passwordEncoder.encode("pwActive");
         Team team = Team.KIA_TIGERS;
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickActive", team)
+                User.createLocalUser(loginId, encoded, "nickActive", "01040005000", team)
         );
 
         // when
@@ -158,7 +162,7 @@ public class UserServiceIntegrationTest {
         String encoded = passwordEncoder.encode("pwDormant");
         Team team = Team.SSG_LANDERS;
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickDormant", team)
+                User.createLocalUser(loginId, encoded, "nickDormant", "01040005000", team)
         );
         User toUpdate = userRepository.findByLoginId(loginId).get();
         userRepository.save(
@@ -195,7 +199,7 @@ public class UserServiceIntegrationTest {
         String encoded = passwordEncoder.encode("pwUpd");
         Team team = Team.DOOSAN_BEARS;
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickOld", team)
+                User.createLocalUser(loginId, encoded, "nickOld", "01040005000", team)
         );
 
         // when
@@ -219,7 +223,7 @@ public class UserServiceIntegrationTest {
         String oldHash  = passwordEncoder.encode(oldRaw);
         Team team       = Team.LG_TWINS;
         userRepository.save(
-                User.createLocalUser(loginId, oldHash, "nickCp", team)
+                User.createLocalUser(loginId, oldHash, "nickCp", "01040005000", team)
         );
 
         // when
@@ -239,7 +243,7 @@ public class UserServiceIntegrationTest {
         String encoded = passwordEncoder.encode("pwWd");
         Team team = Team.KIA_TIGERS;
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickWd", team)
+                User.createLocalUser(loginId, encoded, "nickWd", "01040005000", team)
         );
 
         // when
@@ -252,5 +256,50 @@ public class UserServiceIntegrationTest {
         assertNotNull(updated.getDeletedAt(), "deletedAt 필드가 설정되지 않았습니다.");
     }
 
+    @Test
+    void findLoginIdByPhone_호출시_존재하는번호면_loginId_를_정상적으로_반환한다() {
+        // given
+        String loginId = "initialFindUser";
+        String rawPhone = "010-7777-8888";
+        String normalized = User.normalizePhone(rawPhone);
+        String encodedPw = passwordEncoder.encode("initialPw");
+        Team team = Team.LG_TWINS;
+
+        User savedUser = User.createLocalUser(loginId, encodedPw, "nickFind", normalized, team);
+        userRepository.save(savedUser);
+
+        // when
+        String foundLoginId = userService.findLoginIdByPhone(rawPhone);
+
+        // then
+        assertEquals(loginId, foundLoginId, "저장된 전화번호로 findLoginIdByPhone 호출 시 loginId가 일치해야 한다");
+    }
+
+    @Test
+    void resetPasswordByPhone_정상요청이면_DB에_새비밀번호_인코딩되어_저장된다() {
+        // given
+        String loginId = "initialResetUser";
+        String rawPhone = "010-9999-0000";
+        String normalized = User.normalizePhone(rawPhone);
+        String oldRawPw = "oldPass";
+        String oldEncoded = passwordEncoder.encode(oldRawPw);
+        Team team = Team.KIA_TIGERS;
+
+        User savedUser = User.createLocalUser(loginId, oldEncoded, "nickReset", normalized, team);
+        userRepository.save(savedUser);
+
+        // when
+        String newRawPw = "newSecurePw";
+        // 신규 비밀번호와 확인 비밀번호가 동일한 경우로 보냄
+        userService.resetPasswordByPhone(rawPhone, newRawPw, newRawPw);
+
+        // then
+        User updated = userRepository.findByPhoneNumber(normalized)
+                .orElseThrow(() -> new AssertionError("resetPasswordByPhone 후에도 사용자가 조회되어야 한다."));
+        assertTrue(passwordEncoder.matches(newRawPw, updated.getPassword()),
+                "DB에 저장된 비밀번호가 새 비밀번호로 변경되지 않음.");
+        assertFalse(passwordEncoder.matches(oldRawPw, updated.getPassword()),
+                "이전 비밀번호가 여전히 일치하면 안된다.");
+    }
 
 }

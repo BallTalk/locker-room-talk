@@ -1,17 +1,40 @@
 package com.locker.user.application;
 
+import com.locker.auth.application.SmsPurpose;
+import com.locker.auth.application.SmsVerificationService;
+import com.locker.auth.application.VerifySmsCommand;
 import com.locker.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class UserFacade {
 
     private final UserService userService;
+    private final SmsVerificationService smsVerificationService;
 
+    @Transactional
     public void signUp(SignUpCommand command) {
-        userService.signUp(command.loginId(), command.password(), command.confirmPassword(), command.nickname(), command.favoriteTeam());
+        VerifySmsCommand smsCmd = new VerifySmsCommand(
+                command.phoneNumber(),
+                command.verificationCode(),
+                SmsPurpose.SIGNUP
+        );
+        smsVerificationService.verifyCodeWithoutDelete(smsCmd);
+
+        userService.signUp(
+                command.loginId(),
+                command.password(),
+                command.confirmPassword(),
+                command.nickname(),
+                command.phoneNumber(),
+                command.favoriteTeam()
+        );
+
+        smsVerificationService.deleteCode(command.phoneNumber(), SmsPurpose.SIGNUP);
     }
 
     public Boolean exists(String loginId) {
@@ -32,5 +55,37 @@ public class UserFacade {
 
     public void withdraw(String loginId) {
         userService.withdraw(loginId);
+    }
+
+    @Transactional
+    public String findIdWithSms(FindIdCommand command) {
+        VerifySmsCommand smsCmd = new VerifySmsCommand(
+                command.phoneNumber(),
+                command.verificationCode(),
+                SmsPurpose.FIND_ID
+        );
+        smsVerificationService.verifyCodeWithoutDelete(smsCmd);
+
+        String loginId = userService.findLoginIdByPhone(command.phoneNumber());
+        smsVerificationService.deleteCode(command.phoneNumber(), SmsPurpose.FIND_ID);
+        return loginId;
+    }
+
+    @Transactional
+    public void resetPasswordWithSms(ResetPasswordCommand command) {
+        VerifySmsCommand smsCmd = new VerifySmsCommand(
+                command.phoneNumber(),
+                command.verificationCode(),
+                SmsPurpose.RESET_PW
+        );
+        smsVerificationService.verifyCodeWithoutDelete(smsCmd);
+
+        userService.resetPasswordByPhone(
+                command.phoneNumber(),
+                command.newPassword(),
+                command.newPasswordConfirm()
+        );
+
+        smsVerificationService.deleteCode(command.phoneNumber(), SmsPurpose.RESET_PW);
     }
 }

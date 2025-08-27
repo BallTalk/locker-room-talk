@@ -32,8 +32,16 @@ public class UserException extends CustomException {
         return new UserException(ErrorCode.USER_NOT_FOUND);
     }
 
+    public static UserException userNotFoundByPhone() {
+        return new UserException(ErrorCode.USER_NOT_FOUND_BY_PHONE);
+    }
+
     public static UserException userStatusInvalid() {
         return new UserException(ErrorCode.USER_STATUS_INVALID);
+    }
+
+    public static UserException userNotFoundByProvider() {
+        return new UserException(ErrorCode.USER_NOT_FOUND);
     }
 
 }

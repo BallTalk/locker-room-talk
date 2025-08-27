@@ -39,6 +39,9 @@ public class User extends BaseEntity {
     @Column(name = "nickname", length = 20, nullable = false)
     private String nickname;
 
+    @Column(name = "phone_number", length = 20, nullable = false, unique = true)
+    private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "favorite_team", length = 20, nullable = false)
     private Team favoriteTeam;
@@ -70,12 +73,14 @@ public class User extends BaseEntity {
             String loginId,
             String encodedPassword,
             String nickname,
+            String normalizedPhoneNumber,
             Team favoriteTeam
     ) {
         return User.builder()
                 .loginId(loginId)
                 .password(encodedPassword)
                 .nickname(nickname)
+                .phoneNumber(normalizedPhoneNumber)
                 .favoriteTeam(favoriteTeam)
                 .provider(Provider.LOCAL)
                 .status(Status.ACTIVE)
@@ -83,16 +88,22 @@ public class User extends BaseEntity {
                 .build();
     }
 
+    public static String normalizePhone(String raw) {
+        return raw.replaceAll("\\D", "");
+    }
+
     public static User createOAuthUser(
             Provider provider,
             String providerId,
+            String loginId,
+            String hashedPassword,
             String nickname,
             Team favoriteTeam,
             String profileImageUrl
     ) {
         return User.builder()
-                .loginId(null)
-                .password(null)
+                .loginId(loginId)
+                .password(hashedPassword)
                 .provider(provider)
                 .providerId(providerId)
                 .nickname(nickname)
@@ -122,14 +133,14 @@ public class User extends BaseEntity {
         this.lastLoginAt = now;
         this.loginFailCount = 0;
         if (this.status == Status.SUSPENDED) {
-            this.status = Status.ACTIVE;       // 잠금 해제 로직이 있다면
+            this.status = Status.ACTIVE;
         }
     }
 
     public void loginFailed(int maxFailCount) {
         this.loginFailCount++;
         if (this.loginFailCount >= maxFailCount) {
-            this.status = Status.SUSPENDED;    // 일정 실패 횟수 이상이면 일시 정지
+            this.status = Status.SUSPENDED;
         }
     }
 

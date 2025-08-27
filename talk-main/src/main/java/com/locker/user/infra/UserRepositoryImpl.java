@@ -1,13 +1,11 @@
 package com.locker.user.infra;
 
 import com.locker.user.domain.Provider;
-import com.locker.user.domain.Status;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -41,7 +39,14 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.findByProviderAndProviderId(provider, oauthId);
     }
 
+    @Override
+    public Optional<User> findByPhoneNumber(String normalizedPhoneNumber) {
+        return userJpaRepository.findByPhoneNumber(normalizedPhoneNumber);
+    }
 
-
+    @Override
+    public Optional<User> findById(Long userId) {
+        return userJpaRepository.findById(userId);
+    }
 
 }

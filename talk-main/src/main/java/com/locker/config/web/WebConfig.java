@@ -18,11 +18,12 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
     private final LoggingInterceptor loggingInterceptor;
     private final CorsProperties corsProperties;
+    private final CurrentUserArgumentResolver currentUserArgumentResolver;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loggingInterceptor)
-                .addPathPatterns("/**"); // 모든 경로에 인터셉터 적용
+                .addPathPatterns("/**");
     }
 
     @Override
@@ -32,12 +33,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
-                .maxAge(3600);
+                .maxAge(3600L);
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new CurrentUserArgumentResolver());
+        resolvers.add(currentUserArgumentResolver);
     }
 
 }
