@@ -1,7 +1,7 @@
 package com.locker.security.jwt;
 
 import com.locker.application.JwtBlacklistService;
-import com.locker.filter.PreventReLoginFilter;
+import com.locker.security.filter.PreventReLoginFilter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

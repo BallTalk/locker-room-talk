@@ -2,7 +2,7 @@ package com.locker.security.oauth2;
 
 
 import com.locker.application.CustomOAuth2UserService;
-import com.locker.filter.PreventReLoginFilter;
+import com.locker.security.filter.PreventReLoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

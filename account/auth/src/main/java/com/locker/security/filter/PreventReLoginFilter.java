@@ -1,4 +1,4 @@
-package com.locker.filter;
+package com.locker.security.filter;
 
 import com.locker.exception.model.ErrorCode;
 import jakarta.servlet.FilterChain;

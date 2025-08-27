@@ -17,4 +17,13 @@ dependencies {
     implementation project(':common')
     testImplementation project(':app')
     testImplementation testFixtures(project(':test-support'))
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+
+    implementation "io.jsonwebtoken:jjwt-api:${libs.versions.jjwt.get()}"
+    runtimeOnly   "io.jsonwebtoken:jjwt-impl:${libs.versions.jjwt.get()}"
+    runtimeOnly   "io.jsonwebtoken:jjwt-jackson:${libs.versions.jjwt.get()}"
+
+    implementation "net.nurigo:sdk:${libs.versions.coolsms.get()}"
 }
