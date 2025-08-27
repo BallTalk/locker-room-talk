@@ -24,33 +24,21 @@ dependencies {
     implementation platform("org.springframework.boot:spring-boot-dependencies:${libs.versions.boot.get()}")
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
-
-    implementation "io.jsonwebtoken:jjwt-api:${libs.versions.jjwt.get()}"
-    runtimeOnly   "io.jsonwebtoken:jjwt-impl:${libs.versions.jjwt.get()}"
-    runtimeOnly   "io.jsonwebtoken:jjwt-jackson:${libs.versions.jjwt.get()}"
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation "org.redisson:redisson-spring-boot-starter:${libs.versions.redisson.get()}"
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.springdoc.get()}"
-
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.springdoc.get()}"
 
     compileOnly "org.projectlombok:lombok:${libs.versions.lombok.get()}"
     annotationProcessor "org.projectlombok:lombok:${libs.versions.lombok.get()}"
-    testCompileOnly "org.projectlombok:lombok:${libs.versions.lombok.get()}"
-    testAnnotationProcessor "org.projectlombok:lombok:${libs.versions.lombok.get()}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation "org.testcontainers:mysql:${libs.versions.testcontainers.get()}"
-    testImplementation "org.testcontainers:junit-jupiter:${libs.versions.testcontainers.get()}"
-
-    implementation "net.nurigo:sdk:${libs.versions.coolsms.get()}"
+    testCompileOnly "org.projectlombok:lombok:${libs.versions.lombok.get()}"
+    testAnnotationProcessor "org.projectlombok:lombok:${libs.versions.lombok.get()}"
 }
 
 jacocoTestReport {

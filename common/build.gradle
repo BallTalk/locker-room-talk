@@ -1,0 +1,7 @@
+plugins {
+    id 'locker.java-conventions'
+}
+
+dependencies {
+    testImplementation testFixtures(project(':test-support'))
+}

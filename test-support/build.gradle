@@ -1,0 +1,14 @@
+plugins {
+    id 'locker.java-conventions'
+    id 'java-test-fixtures'
+}
+
+dependencies {
+    testFixturesApi platform("org.springframework.boot:spring-boot-dependencies:${libs.versions.boot.get()}")
+    testFixturesApi 'org.springframework.boot:spring-boot-starter-test'
+    testFixturesApi 'org.springframework.boot:spring-boot-testcontainers'
+    testFixturesApi "org.testcontainers:junit-jupiter:${libs.versions.testcontainers.get()}"
+    testFixturesApi "org.testcontainers:mysql:${libs.versions.testcontainers.get()}"
+}
+
+
