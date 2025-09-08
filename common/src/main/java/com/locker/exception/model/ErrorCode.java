@@ -36,6 +36,8 @@ public enum ErrorCode {
     SMS_SEND_FAILED                 (HttpStatus.INTERNAL_SERVER_ERROR, "SMS 전송에 실패했습니다."),
     SMS_CODE_EXPIRED                (HttpStatus.BAD_REQUEST, "인증번호가 없거나 만료되었습니다."),
     SMS_CODE_MISMATCH               (HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않습니다."),
+    TEAM_NOT_FOUND                  (HttpStatus.NOT_FOUND, "존재하지 않는 팀 코드입니다."),
+
 
     INVALID_REQUEST                 (HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     NOT_FOUND                       (HttpStatus.NOT_FOUND, "리소스를 찾을 수 없습니다."),

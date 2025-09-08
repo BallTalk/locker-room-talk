@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `team`;
-
+DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS team;
 CREATE TABLE `team` (
     code                VARCHAR(20)   PRIMARY KEY COMMENT '팀 코드 (불변, 시스템 식별자)',
     name_en             VARCHAR(100)  NOT NULL COMMENT '팀 영문 이름 (변경 가능)',
@@ -12,7 +12,6 @@ CREATE TABLE `team` (
     updated_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '변경일'
 ) ENGINE=InnoDB COMMENT='팀 테이블';
 
-DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     id                  BIGINT        AUTO_INCREMENT PRIMARY KEY COMMENT '유저 PK ID',
     login_id            VARCHAR(20)   NULL UNIQUE COMMENT '아이디',
@@ -37,5 +36,5 @@ CREATE TABLE `user` (
     INDEX idx_status      (status),
     INDEX idx_last_login  (last_login_at),
     CONSTRAINT fk_user_team FOREIGN KEY (team_code) REFERENCES team(code)
-) ENGINE=InnoDB COMMENT=`유저 테이블`;
+) ENGINE=InnoDB COMMENT='유저 테이블';
 
