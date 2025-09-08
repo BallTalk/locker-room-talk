@@ -55,7 +55,7 @@ public class UserController {
             @CurrentUser String loginId
     ) {
         return ResponseEntity.ok(
-                MyProfileResponse.from(userFacade.getUserByLoginId(loginId))
+                MyProfileResponse.from(userFacade.getUserProfile(loginId))
         );
     }
 
@@ -81,7 +81,7 @@ public class UserController {
             @PathVariable String loginId
     ) {
         return ResponseEntity.ok(
-                UserProfileResponse.from(userFacade.getUserByLoginId(loginId))
+                UserProfileResponse.from(userFacade.getUserProfile(loginId))
         );
     }
 

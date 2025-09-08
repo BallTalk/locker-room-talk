@@ -1,5 +1,8 @@
 package com.locker.application;
 
+import com.locker.domain.Team;
+import com.locker.domain.TeamService;
+import com.locker.domain.User;
 import com.locker.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserFacade {
 
+    private final TeamService teamService;
     private final UserService userService;
     private final SmsVerificationService smsVerificationService;
 
@@ -37,8 +41,15 @@ public class UserFacade {
         return userService.existsByLoginId(loginId);
     }
 
-    public ProfileInfo getUserByLoginId(String loginId) {
-        return ProfileInfo.from(userService.findByLoginId(loginId));
+    public User getUserByLoginId(String loginId) {
+        return userService.findByLoginId(loginId);
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileInfo getUserProfile(String loginId) {
+        User user = userService.findByLoginId(loginId);
+        Team team = teamService.findByTeamCode(user.getTeamCode());
+        return ProfileInfo.from(user, team);
     }
 
     public void updateProfile(String loginId, UpdateProfileCommand command) {
