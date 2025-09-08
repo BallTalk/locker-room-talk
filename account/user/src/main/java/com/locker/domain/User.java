@@ -7,10 +7,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
-@Builder
 @Table(name = "`user`")
 public class User extends BaseEntity {
 
@@ -41,9 +41,8 @@ public class User extends BaseEntity {
     @Column(name = "phone_number", length = 20, nullable = false, unique = true)
     private String phoneNumber;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "favorite_team", length = 20, nullable = false)
-    private Team favoriteTeam;
+    @Column(name = "team_code", length = 20, nullable = false)
+    private String teamCode;
 
     @Column(name = "profile_image_url", length = 255)
     private String profileImageUrl;
@@ -73,14 +72,14 @@ public class User extends BaseEntity {
             String encodedPassword,
             String nickname,
             String normalizedPhoneNumber,
-            Team favoriteTeam
+            String teamCode
     ) {
         return User.builder()
                 .loginId(loginId)
                 .password(encodedPassword)
                 .nickname(nickname)
                 .phoneNumber(normalizedPhoneNumber)
-                .favoriteTeam(favoriteTeam)
+                .teamCode(teamCode)
                 .provider(Provider.LOCAL)
                 .status(Status.ACTIVE)
                 .loginFailCount(0)
@@ -97,7 +96,7 @@ public class User extends BaseEntity {
             String loginId,
             String hashedPassword,
             String nickname,
-            Team favoriteTeam,
+            String teamCode,
             String profileImageUrl
     ) {
         return User.builder()
@@ -106,7 +105,7 @@ public class User extends BaseEntity {
                 .provider(provider)
                 .providerId(providerId)
                 .nickname(nickname)
-                .favoriteTeam(favoriteTeam)
+                .teamCode(teamCode)
                 .profileImageUrl(profileImageUrl)
                 .status(Status.ACTIVE)
                 .loginFailCount(0)
