@@ -36,7 +36,7 @@ public class UserService {
         return user;
     }
 
-    public void signUp(String loginId, String password, String confirmPassword, String nickname, String phoneNumber, Team favoriteTeam) {
+    public void signUp(String loginId, String password, String confirmPassword, String nickname, String phoneNumber, String teamCode) {
         if (!password.equals(confirmPassword)) {
             throw UserException.passwordNotMatch();
         }
@@ -45,7 +45,7 @@ public class UserService {
 
         String encodedPassword = passwordEncoder.encode(password);
         String normalizedPhoneNumber = User.normalizePhone(phoneNumber);
-        User user = User.createLocalUser(loginId, encodedPassword, nickname, normalizedPhoneNumber, favoriteTeam);
+        User user = User.createLocalUser(loginId, encodedPassword, nickname, normalizedPhoneNumber, teamCode);
 
         userRepository.save(user);
     }

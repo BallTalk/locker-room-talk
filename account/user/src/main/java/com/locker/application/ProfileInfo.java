@@ -8,7 +8,7 @@ public record ProfileInfo(
         String  loginId,
         String  provider,
         String  nickname,
-        Team    favoriteTeam,
+        String  teamCode,
         String  profileImageUrl,
         String  statusMessage,
         String  status
@@ -19,7 +19,7 @@ public record ProfileInfo(
                 user.getLoginId(),
                 user.getProvider()       != null ? user.getProvider().name() : "LOCAL",
                 user.getNickname(),
-                user.getFavoriteTeam(),
+                user.getTeamCode(),
                 user.getProfileImageUrl(),
                 user.getStatusMessage(),
                 user.getStatus()         != null ? user.getStatus().name()   : "UNKNOWN"

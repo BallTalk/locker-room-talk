@@ -38,11 +38,10 @@ public class UserServiceUnitTest {
     void 회원가입_중_비밀번호_불일치_시_PASSWORD_DO_NOT_MATCH_예외가_발생한다() {
         // given
         String loginId = "user1", pw = "abc", confirm = "def";
-        Team team = Team.DOOSAN_BEARS;
 
         // when & then
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp(loginId, pw, confirm, "nick", "01040005000", team));
+                () -> userService.signUp(loginId, pw, confirm, "nick", "01040005000", "TEAM002"));
         assertEquals(ErrorCode.PASSWORD_DO_NOT_MATCH, ex.getErrorCode());
         verifyNoInteractions(userRepository);
     }
@@ -51,11 +50,10 @@ public class UserServiceUnitTest {
     void 회원가입_중_아이디가_중복될_시_LOGIN_ID_DUPLICATE_예외가_발생한다() {
         // given
         when(userRepository.existsByLoginId("user1")).thenReturn(true);
-        Team team = Team.LG_TWINS;
 
         // when & then
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp("user1", "pw", "pw", "nick", "01040005000", team));
+                () -> userService.signUp("user1", "pw", "pw", "nick", "01040005000", "TEAM003"));
         assertEquals(ErrorCode.LOGIN_ID_DUPLICATE, ex.getErrorCode());
         verify(userRepository).existsByLoginId("user1");
         verifyNoMoreInteractions(userRepository);
@@ -66,10 +64,9 @@ public class UserServiceUnitTest {
         // given
         when(userRepository.existsByLoginId("user1")).thenReturn(false);
         when(passwordEncoder.encode("pw")).thenReturn("ENCODED");
-        Team team = Team.KIA_TIGERS;
 
         // when
-        userService.signUp("user1", "pw", "pw", "nick", "01040005000", team);
+        userService.signUp("user1", "pw", "pw", "nick", "01040005000", "TEAM004");
 
         // then
         verify(passwordEncoder).encode("pw");
@@ -80,7 +77,7 @@ public class UserServiceUnitTest {
         assertEquals("ENCODED",         saved.getPassword());
         assertEquals("nick",            saved.getNickname());
         assertEquals("01040005000",     saved.getPhoneNumber());
-        assertEquals(team,              saved.getFavoriteTeam());
+        assertEquals("TEAM004",         saved.getTeamCode());
         assertEquals(Provider.LOCAL,    saved.getProvider());
         assertEquals(Status.ACTIVE,     saved.getStatus());
     }
@@ -100,7 +97,7 @@ public class UserServiceUnitTest {
     @Test
     void findByLoginId_호출시_존재하는_아이디면_User_를_반환한다() {
         // given
-        User user = User.createLocalUser("userA", "hashA", "nickA", "01040005000", Team.SSG_LANDERS);
+        User user = User.createLocalUser("userA", "hashA", "nickA", "01040005000", "TEAM005");
         when(userRepository.findByLoginId("userA")).thenReturn(Optional.of(user));
 
         // when
@@ -126,7 +123,7 @@ public class UserServiceUnitTest {
     @Test
     void findByLoginIdAndActiveOrDormant_호출시_상태가_ACTIVE_면_User_를_반환한다() {
         // given
-        User activeUser = User.createLocalUser("userB", "hashB", "nickB", "01040005000", Team.LOTTE_GIANTS);
+        User activeUser = User.createLocalUser("userB", "hashB", "nickB", "01040005000", "TEAM006");
         when(userRepository.findByLoginId("userB"))
                 .thenReturn(Optional.of(activeUser));
 
@@ -154,7 +151,7 @@ public class UserServiceUnitTest {
     @Test
     void findByLoginIdAndActiveOrDormant_호출시_상태불일치면_userStatusInvalid_예외가_발생한다() {
         // given
-        User suspended = User.createLocalUser("userD", "hashD", "nickD", "01040005000", Team.KIA_TIGERS);
+        User suspended = User.createLocalUser("userD", "hashD", "nickD", "01040005000", "TEAM007");
         User spySuspended = spy(suspended);
         doReturn(Status.SUSPENDED).when(spySuspended).getStatus();
 
@@ -286,7 +283,7 @@ public class UserServiceUnitTest {
         // given
         String rawPhone = "010-1234-5678";
         String normalized = User.normalizePhone(rawPhone);
-        User mockUser = User.createLocalUser("foundUser", "hash", "nick", normalized, Team.DOOSAN_BEARS);
+        User mockUser = User.createLocalUser("foundUser", "hash", "nick", normalized, "TEAM008");
         when(userRepository.findByPhoneNumber(normalized)).thenReturn(Optional.of(mockUser));
 
         // when

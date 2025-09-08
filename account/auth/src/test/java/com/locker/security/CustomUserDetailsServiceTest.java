@@ -32,7 +32,7 @@ class CustomUserDetailsServiceTest {
     @Test
     void 존재하는_로그인아이디일_경우_UserDetails가_반환된다() {
         // given
-        User u = User.createLocalUser("test1","pwhash","testnick1", "01040005000", Team.LG_TWINS);
+        User u = User.createLocalUser("test1","pwhash","testnick1", "01040005000", "TEAM005");
         when(repo.findByLoginId("test1")).thenReturn(Optional.of(u));
 
         // when

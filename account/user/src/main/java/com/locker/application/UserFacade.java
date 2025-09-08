@@ -27,7 +27,7 @@ public class UserFacade {
                 command.confirmPassword(),
                 command.nickname(),
                 command.phoneNumber(),
-                command.favoriteTeam()
+                command.teamCode()
         );
 
         smsVerificationService.deleteCode(command.phoneNumber(), SmsPurpose.SIGNUP);

@@ -16,8 +16,8 @@ public record MyProfileResponse(
         @Schema(description = "닉네임", example = "박두산")
         String nickname,
 
-        @Schema(description = "응원 팀", example = "DOOSAN_BEARS")
-        Team favoriteTeam,
+        @Schema(description = "응원 팀 코드 (KBO 팀 코드)", example = "DOO")
+        String teamCode,
 
         @Schema(description = "프로필 이미지 URL", example = "https://example.com/avatar.png")
         String profileImageUrl,
@@ -34,7 +34,7 @@ public record MyProfileResponse(
                 info.loginId(),
                 info.provider(),
                 info.nickname(),
-                info.favoriteTeam(),
+                info.teamCode(),
                 info.profileImageUrl(),
                 info.statusMessage(),
                 info.status()

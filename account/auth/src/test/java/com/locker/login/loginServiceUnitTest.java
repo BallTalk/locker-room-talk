@@ -64,7 +64,7 @@ class loginServiceUnitTest {
                 "hashedPwd",
                 "테스트닉네임",
                 "01040005000",
-                Team.DOOSAN_BEARS
+                "TEAM002"
         );
         when(userService.findByLoginIdAndActiveOrDormant(LOGIN_ID))
                 .thenReturn(fakeUser);
