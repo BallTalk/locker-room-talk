@@ -1,0 +1,10 @@
+plugins {
+    id 'locker.java-conventions'
+    alias(libs.plugins.spring.boot)
+}
+
+dependencies {
+    implementation project(':common')
+    testImplementation project(':app')
+    testImplementation testFixtures(project(':test-support'))
+}
