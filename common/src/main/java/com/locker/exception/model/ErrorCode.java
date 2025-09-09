@@ -29,13 +29,15 @@ public enum ErrorCode {
     NICKNAME_LENGTH_INVALID         (HttpStatus.BAD_REQUEST, "닉네임은 5~20자여야 합니다."),
     PHONE_NUMBER_REQUIRED           (HttpStatus.BAD_REQUEST, "휴대폰 번호는 필수입니다."),
     PHONE_NUMBER_PATTERN_INVALID    (HttpStatus.BAD_REQUEST, "휴대폰 번호 형식이 올바르지 않습니다."),
-    FAVORITE_TEAM_REQUIRED          (HttpStatus.BAD_REQUEST, "응원 팀 선택은 필수입니다."),
+    TEAM_CODE_REQUIRED              (HttpStatus.BAD_REQUEST, "응원 팀 선택은 필수입니다."),
     PROFILE_IMAGE_URL_TOO_LONG      (HttpStatus.BAD_REQUEST, "프로필 이미지 URL 길이는 255자 이하여야 합니다."),
     STATUS_MESSAGE_TOO_LONG         (HttpStatus.BAD_REQUEST, "상태 메시지는 200자 이하여야 합니다."),
     SMS_PURPOSE_REQUIRED            (HttpStatus.BAD_REQUEST, "SMS 인증 용도는 필수입니다."),
     SMS_SEND_FAILED                 (HttpStatus.INTERNAL_SERVER_ERROR, "SMS 전송에 실패했습니다."),
     SMS_CODE_EXPIRED                (HttpStatus.BAD_REQUEST, "인증번호가 없거나 만료되었습니다."),
     SMS_CODE_MISMATCH               (HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않습니다."),
+    TEAM_NOT_FOUND                  (HttpStatus.NOT_FOUND, "존재하지 않는 팀 코드입니다."),
+
 
     INVALID_REQUEST                 (HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     NOT_FOUND                       (HttpStatus.NOT_FOUND, "리소스를 찾을 수 없습니다."),

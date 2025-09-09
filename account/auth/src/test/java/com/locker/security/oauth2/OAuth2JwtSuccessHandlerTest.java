@@ -70,7 +70,7 @@ class OAuth2JwtSuccessHandlerTest {
                 "loginUser123",
                 "hashedPwd",
                 "nick",
-                Team.NOT_SET,
+                "TEAM001",
                 null
         );
         given(userRepository.findByProviderAndProviderId(Provider.GOOGLE, "provider123"))

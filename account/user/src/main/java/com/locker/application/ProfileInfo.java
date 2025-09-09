@@ -8,21 +8,27 @@ public record ProfileInfo(
         String  loginId,
         String  provider,
         String  nickname,
-        Team    favoriteTeam,
+        String  teamCode,
+        String  teamNameKr,
+        String  teamNameEn,
+        String  teamLogoUrl,
         String  profileImageUrl,
         String  statusMessage,
         String  status
 ) {
-    public static ProfileInfo from(User user) {
+    public static ProfileInfo from(User user, Team team) {
         return new ProfileInfo(
                 user.getId(),
                 user.getLoginId(),
-                user.getProvider()       != null ? user.getProvider().name() : "LOCAL",
+                user.getProvider() != null ? user.getProvider().name() : "LOCAL",
                 user.getNickname(),
-                user.getFavoriteTeam(),
+                user.getTeamCode(),
+                team.getNameKr(),
+                team.getNameEn(),
+                team.getLogoUrl(),
                 user.getProfileImageUrl(),
                 user.getStatusMessage(),
-                user.getStatus()         != null ? user.getStatus().name()   : "UNKNOWN"
+                user.getStatus() != null ? user.getStatus().name() : "UNKNOWN"
         );
     }
 }

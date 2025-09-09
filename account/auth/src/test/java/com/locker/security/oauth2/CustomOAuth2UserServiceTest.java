@@ -141,7 +141,7 @@ class CustomOAuth2UserServiceTest {
 
         User existing = User.createOAuthUser(
                 Provider.GOOGLE, "ABC", "prefixXYZ", "hashedSuffix",
-                "baz", Team.NOT_SET, null
+                "baz", "TEAM001", null
         );
         given(userRepository.findByProviderAndProviderId(Provider.GOOGLE, "ABC"))
                 .willReturn(Optional.of(existing));

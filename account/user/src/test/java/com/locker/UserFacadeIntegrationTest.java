@@ -83,7 +83,7 @@ class UserFacadeIntegrationTest {
                 "pw",
                 "nick",
                 phone,
-                Team.LG_TWINS,
+                "TEAM006",
                 rawCode
         );
 
@@ -107,7 +107,7 @@ class UserFacadeIntegrationTest {
         // given: Redis에 코드 미저장
         SignUpCommand cmd = new SignUpCommand(
                 "noCodeUser", "pw", "pw",
-                "nick", "01012345678", Team.DOOSAN_BEARS,
+                "nick", "01012345678", "TEAM007",
                 "000000"
         );
 
@@ -125,7 +125,7 @@ class UserFacadeIntegrationTest {
         smsRepository.saveCode(phone, SmsPurpose.SIGNUP, "123456", 300L);
         SignUpCommand cmd = new SignUpCommand(
                 "badCodeUser", "pw", "pw",
-                "nick", phone, Team.KIA_TIGERS,
+                "nick", phone, "TEAM008",
                 "000000"
         );
 
@@ -142,7 +142,7 @@ class UserFacadeIntegrationTest {
         String phone = "01022223333";
         userRepository.save(User.createLocalUser(
                 "existUser", passwordEncoder.encode("any"),
-                "nick", phone, Team.KIA_TIGERS
+                "nick", phone, "TEAM009"
         ));
         smsRepository.saveCode(phone, SmsPurpose.FIND_ID, "654321", 300L);
 
@@ -163,7 +163,7 @@ class UserFacadeIntegrationTest {
         String norm = User.normalizePhone(raw);
         userRepository.save(User.createLocalUser(
                 "pwUser", passwordEncoder.encode("oldPw"),
-                "nick", norm, Team.SSG_LANDERS
+                "nick", norm, "TEAM010"
         ));
         smsRepository.saveCode(norm, SmsPurpose.RESET_PW, "789012", 300L);
 

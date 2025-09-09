@@ -49,7 +49,7 @@ public class CustomOAuth2UserService
 
         String nickname;
         String profileImageUrl = null;
-        Team team            = Team.NOT_SET;
+        String teamCode = "TEAM000"; // NOT_SET
 
         if (provider == Provider.KAKAO) {
             @SuppressWarnings("unchecked")
@@ -90,7 +90,7 @@ public class CustomOAuth2UserService
                             loginId,
                             hashedPassword,
                             nickname,
-                            team,
+                            teamCode,
                             profileImageUrlToUse
                     );
 

@@ -33,14 +33,14 @@ public class UserServiceIntegrationTest {
     @Test
     void 회원가입_성공_시_User가_DB에_저장된다() {
         // given
-        String loginId = "intgUser";
-        String pw      = "password";
-        String nick    = "intgNick";
-        String pn      = "01040005000";
-        Team team      = Team.DOOSAN_BEARS;
+        String loginId  = "intgUser";
+        String pw       = "password";
+        String nick     = "intgNick";
+        String pn       = "01040005000";
+        String teamCode = "TEAM009";
 
         // when
-        userService.signUp(loginId, pw, pw, nick, pn, team);
+        userService.signUp(loginId, pw, pw, nick, pn, teamCode);
 
         // then
         assertTrue(userService.existsByLoginId(loginId));
@@ -51,7 +51,7 @@ public class UserServiceIntegrationTest {
         assertNotEquals(pw,       saved.getPassword()); // 암호화해서 일치하지 않는 것을 검증
         assertEquals(nick,        saved.getNickname());
         assertEquals(pn,          saved.getPhoneNumber());
-        assertEquals(team,        saved.getFavoriteTeam());
+        assertEquals(teamCode,    saved.getTeamCode());
     }
 
     @Test
@@ -62,11 +62,11 @@ public class UserServiceIntegrationTest {
         String pw2     = "pw2";
         String nick    = "nick";
         String pn      = "01040005000";
-        Team team      = Team.LG_TWINS;
+        String teamCode = "TEAM009";
 
         // when & then
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp(loginId, pw1, pw2, nick, pn, team)
+                () -> userService.signUp(loginId, pw1, pw2, nick, pn, teamCode)
         );
         assertEquals(ErrorCode.PASSWORD_DO_NOT_MATCH, ex.getErrorCode());
     }
@@ -76,15 +76,15 @@ public class UserServiceIntegrationTest {
         // given
         String loginId = "dupUser";
         String encoded = passwordEncoder.encode("init");
-        Team existingTeam = Team.KIA_TIGERS;
+        String existingTeamCode = "TEAM009";
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nick", "01040005000", existingTeam)
+                User.createLocalUser(loginId, encoded, "nick", "01040005000", existingTeamCode)
         );
 
         // when & then
-        Team newTeam = Team.SSG_LANDERS;
+        String newTeamCode = "TEAM010";
         UserException ex = assertThrows(UserException.class,
-                () -> userService.signUp(loginId, "pw", "pw", "nick2", "01040005000", newTeam)
+                () -> userService.signUp(loginId, "pw", "pw", "nick2", "01040005000", newTeamCode)
         );
         assertEquals(ErrorCode.LOGIN_ID_DUPLICATE, ex.getErrorCode());
     }
@@ -94,9 +94,9 @@ public class UserServiceIntegrationTest {
         // given
         String loginId = "existsUser";
         String encoded = passwordEncoder.encode("pw");
-        Team existingTeam = Team.LG_TWINS;
+        String existingTeamCode = "TEAM001";
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nick", "01040005000", existingTeam)
+                User.createLocalUser(loginId, encoded, "nick", "01040005000", existingTeamCode)
         );
 
         // when
@@ -120,9 +120,9 @@ public class UserServiceIntegrationTest {
         // given
         String loginId = "findUser";
         String encoded = passwordEncoder.encode("pw123");
-        Team team = Team.LG_TWINS;
+        String teamCode = "TEAM001";
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickFind","01040005000", team)
+                User.createLocalUser(loginId, encoded, "nickFind","01040005000", teamCode)
         );
 
         // when
@@ -138,9 +138,9 @@ public class UserServiceIntegrationTest {
         // given
         String loginId = "activeUser";
         String encoded = passwordEncoder.encode("pwActive");
-        Team team = Team.KIA_TIGERS;
+        String teamCode = "TEAM001";
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickActive", "01040005000", team)
+                User.createLocalUser(loginId, encoded, "nickActive", "01040005000", teamCode)
         );
 
         // when
@@ -156,9 +156,9 @@ public class UserServiceIntegrationTest {
         // given
         String loginId = "dormantUser";
         String encoded = passwordEncoder.encode("pwDormant");
-        Team team = Team.SSG_LANDERS;
+        String teamCode = "TEAM001";
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickDormant", "01040005000", team)
+                User.createLocalUser(loginId, encoded, "nickDormant", "01040005000", teamCode)
         );
         User toUpdate = userRepository.findByLoginId(loginId).get();
         userRepository.save(
@@ -169,7 +169,7 @@ public class UserServiceIntegrationTest {
                         .providerId(toUpdate.getProviderId())
                         .password(toUpdate.getPassword())
                         .nickname(toUpdate.getNickname())
-                        .favoriteTeam(toUpdate.getFavoriteTeam())
+                        .teamCode(toUpdate.getTeamCode())
                         .profileImageUrl(toUpdate.getProfileImageUrl())
                         .statusMessage(toUpdate.getStatusMessage())
                         .status(Status.DORMANT)
@@ -193,9 +193,9 @@ public class UserServiceIntegrationTest {
         // given
         String loginId = "updUser";
         String encoded = passwordEncoder.encode("pwUpd");
-        Team team = Team.DOOSAN_BEARS;
+        String teamCode = "TEAM001";
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickOld", "01040005000", team)
+                User.createLocalUser(loginId, encoded, "nickOld", "01040005000", teamCode)
         );
 
         // when
@@ -217,9 +217,9 @@ public class UserServiceIntegrationTest {
         String loginId = "cpUser";
         String oldRaw   = "oldPw";
         String oldHash  = passwordEncoder.encode(oldRaw);
-        Team team       = Team.LG_TWINS;
+        String teamCode = "TEAM001";
         userRepository.save(
-                User.createLocalUser(loginId, oldHash, "nickCp", "01040005000", team)
+                User.createLocalUser(loginId, oldHash, "nickCp", "01040005000", teamCode)
         );
 
         // when
@@ -237,9 +237,10 @@ public class UserServiceIntegrationTest {
         // given
         String loginId = "wdUser";
         String encoded = passwordEncoder.encode("pwWd");
-        Team team = Team.KIA_TIGERS;
+        String teamCode = "TEAM001";
+
         userRepository.save(
-                User.createLocalUser(loginId, encoded, "nickWd", "01040005000", team)
+                User.createLocalUser(loginId, encoded, "nickWd", "01040005000", teamCode)
         );
 
         // when
@@ -259,9 +260,10 @@ public class UserServiceIntegrationTest {
         String rawPhone = "010-7777-8888";
         String normalized = User.normalizePhone(rawPhone);
         String encodedPw = passwordEncoder.encode("initialPw");
-        Team team = Team.LG_TWINS;
+        String teamCode = "TEAM001";
 
-        User savedUser = User.createLocalUser(loginId, encodedPw, "nickFind", normalized, team);
+
+        User savedUser = User.createLocalUser(loginId, encodedPw, "nickFind", normalized, teamCode);
         userRepository.save(savedUser);
 
         // when
@@ -279,9 +281,9 @@ public class UserServiceIntegrationTest {
         String normalized = User.normalizePhone(rawPhone);
         String oldRawPw = "oldPass";
         String oldEncoded = passwordEncoder.encode(oldRawPw);
-        Team team = Team.KIA_TIGERS;
+        String teamCode = "TEAM001";
 
-        User savedUser = User.createLocalUser(loginId, oldEncoded, "nickReset", normalized, team);
+        User savedUser = User.createLocalUser(loginId, oldEncoded, "nickReset", normalized, teamCode);
         userRepository.save(savedUser);
 
         // when

@@ -42,15 +42,15 @@ public record SignUpRequest(
         )
         String phoneNumber,
 
-        @Schema(description = "응원 팀 (KBO)", example = "DOOSAN_BEARS")
-        @NotNull(message = "FAVORITE_TEAM_REQUIRED")
-        Team favoriteTeam,
+        @Schema(description = "응원 팀 코드 (KBO 팀 코드)", example = "TEAM001")
+        @NotBlank(message = "TEAM_CODE_REQUIRED")
+        String teamCode,
 
         @Schema(description = "SMS 인증 코드", example = "123456")
         @NotBlank(message = "SMS_CODE_REQUIRED")
         String verificationCode
 ) {
         public SignUpCommand toCommand() {
-                return new SignUpCommand(loginId, password, confirmPassword, nickname, phoneNumber, favoriteTeam, verificationCode);
+                return new SignUpCommand(loginId, password, confirmPassword, nickname, phoneNumber, teamCode, verificationCode);
         }
 }
