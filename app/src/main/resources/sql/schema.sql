@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `board`;
 DROP TABLE IF EXISTS team;
 CREATE TABLE `team` (
     code                VARCHAR(20)   PRIMARY KEY COMMENT '팀 코드 (불변, 시스템 식별자)',
@@ -38,3 +39,27 @@ CREATE TABLE `user` (
     CONSTRAINT fk_user_team FOREIGN KEY (team_code) REFERENCES team(code)
 ) ENGINE=InnoDB COMMENT='유저 테이블';
 
+
+CREATE TABLE `board` (
+    id                  BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '게시판 PK ID',
+    type                VARCHAR(20)   NOT NULL COMMENT '게시판 유형 (GENERAL, NOTICE, QNA, TEAM)',
+                        CHECK (type IN ('GENERAL','NOTICE','QNA','TEAM')),
+    team_code           VARCHAR(20)   NULL COMMENT '팀 게시판일 경우 team.code (GENERAL/NOTICE/QNA는 NULL 허용)',
+    name                VARCHAR(100)  NOT NULL COMMENT '게시판 이름',
+    description         VARCHAR(255)  NULL COMMENT '게시판 설명',
+    is_active           CHAR(1)       NOT NULL DEFAULT 'Y' COMMENT '사용 여부 (Y/N)',
+    allow_anonymous     CHAR(1)       NOT NULL DEFAULT 'N' COMMENT '익명 글 허용 여부',
+    post_count          INT           NOT NULL DEFAULT 0 COMMENT '게시글 수 (캐싱 용도)',
+    comment_count       INT           NOT NULL DEFAULT 0 COMMENT '댓글 수 (캐싱 용도)',
+    created_by          BIGINT        NOT NULL COMMENT '생성자 (USER FK)',
+    created_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    updated_by          BIGINT        NOT NULL COMMENT '변경자',
+    updated_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '변경일',
+
+    INDEX idx_board_type (type),
+    INDEX idx_team_code (team_code),
+    INDEX idx_is_active (is_active),
+
+    CONSTRAINT fk_board_user FOREIGN KEY (created_by) REFERENCES user(id),
+    CONSTRAINT fk_board_team FOREIGN KEY (team_code) REFERENCES team(code)
+) ENGINE=InnoDB COMMENT='게시판 테이블';

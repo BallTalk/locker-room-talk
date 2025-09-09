@@ -22,11 +22,8 @@ public class User extends BaseEntity {
     private String loginId;
 
     @Enumerated(EnumType.STRING)
-    @Column(
-            name = "provider",
-            nullable = false,
-            columnDefinition = "VARCHAR(10) NOT NULL " + "CHECK (provider IN ('LOCAL','GOOGLE','KAKAO'))"
-    )
+
+    @Column(name = "provider", nullable = false, length = 10)
     private Provider provider;
 
     @Column(name = "provider_id", length = 100)
@@ -51,11 +48,7 @@ public class User extends BaseEntity {
     private String statusMessage;
 
     @Enumerated(EnumType.STRING)
-    @Column(
-            name = "status",
-            nullable = false,
-            columnDefinition = "VARCHAR(10) NOT NULL " + "CHECK (status IN (" + "'ACTIVE','SUSPENDED','BANNED','WITHDRAWN','DORMANT'))"
-    )
+    @Column(name = "status", nullable = false, length = 10)
     private Status status;
 
     @Column(name = "last_login_at")
