@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `board`;
+DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS team;
 CREATE TABLE `team` (
     code                VARCHAR(20)   PRIMARY KEY COMMENT '팀 코드 (불변, 시스템 식별자)',
@@ -60,6 +60,5 @@ CREATE TABLE `board` (
     INDEX idx_team_code (team_code),
     INDEX idx_is_active (is_active),
 
-    CONSTRAINT fk_board_user FOREIGN KEY (created_by) REFERENCES user(id),
     CONSTRAINT fk_board_team FOREIGN KEY (team_code) REFERENCES team(code)
 ) ENGINE=InnoDB COMMENT='게시판 테이블';
