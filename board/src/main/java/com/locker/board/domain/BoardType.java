@@ -1,4 +1,4 @@
-package com.locker.board;
+package com.locker.board.domain;
 
 import lombok.Getter;
 
