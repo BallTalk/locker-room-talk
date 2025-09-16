@@ -4,7 +4,10 @@ plugins {
 }
 
 dependencies {
+    implementation project(":menu")
+    implementation project(":team")
     implementation project(":account")
+    implementation project(":board")
     implementation project(":common")
     testImplementation testFixtures(project(':test-support'))
 
