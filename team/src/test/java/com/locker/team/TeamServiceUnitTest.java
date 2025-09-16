@@ -4,7 +4,7 @@ import com.locker.team.domain.Team;
 import com.locker.team.domain.TeamException;
 import com.locker.team.domain.TeamRepository;
 import com.locker.team.domain.TeamService;
-import com.locker.exception.model.ErrorCode;
+import com.locker.common.exception.model.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

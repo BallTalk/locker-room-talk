@@ -1,6 +1,6 @@
 package com.locker.user;
 
-import com.locker.exception.model.ErrorCode;
+import com.locker.common.exception.model.ErrorCode;
 import com.locker.user.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

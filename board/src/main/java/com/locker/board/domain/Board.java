@@ -1,6 +1,6 @@
 package com.locker.board.domain;
 
-import com.locker.entity.BaseEntity;
+import com.locker.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

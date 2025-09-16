@@ -1,4 +1,4 @@
-package com.locker.exception.model;
+package com.locker.common.exception.model;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

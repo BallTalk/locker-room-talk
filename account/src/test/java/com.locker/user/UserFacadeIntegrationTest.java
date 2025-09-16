@@ -4,7 +4,7 @@ import com.locker.auth.application.*;
 import com.locker.user.application.*;
 import com.locker.auth.infra.RedisSmsCodeRepository;
 import com.locker.auth.infra.SmsSender;
-import com.locker.exception.model.ErrorCode;
+import com.locker.common.exception.model.ErrorCode;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

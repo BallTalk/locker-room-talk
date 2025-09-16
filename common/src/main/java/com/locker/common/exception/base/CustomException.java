@@ -1,6 +1,6 @@
-package com.locker.exception.base;
+package com.locker.common.exception.base;
 
-import com.locker.exception.model.ErrorCode;
+import com.locker.common.exception.model.ErrorCode;
 import lombok.Getter;
 
 @Getter

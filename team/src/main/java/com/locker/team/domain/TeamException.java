@@ -1,7 +1,7 @@
 package com.locker.team.domain;
 
-import com.locker.exception.base.CustomException;
-import com.locker.exception.model.ErrorCode;
+import com.locker.common.exception.base.CustomException;
+import com.locker.common.exception.model.ErrorCode;
 
 public class TeamException extends CustomException {
     private TeamException(ErrorCode code) {

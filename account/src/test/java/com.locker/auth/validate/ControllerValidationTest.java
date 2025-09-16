@@ -1,7 +1,7 @@
 package com.locker.auth.validate;
 
 import com.locker.auth.api.loginController;
-import com.locker.exception.handler.GlobalExceptionHandler;
+import com.locker.common.exception.handler.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.locker.filter;
+package com.locker.common.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

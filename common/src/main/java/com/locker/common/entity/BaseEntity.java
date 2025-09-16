@@ -1,4 +1,4 @@
-package com.locker.entity;
+package com.locker.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

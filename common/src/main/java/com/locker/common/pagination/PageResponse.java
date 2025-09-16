@@ -1,4 +1,4 @@
-package com.locker.pagination;
+package com.locker.common.pagination;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.locker.user.domain;
 
-import com.locker.exception.base.CustomException;
-import com.locker.exception.model.ErrorCode;
+import com.locker.common.exception.base.CustomException;
+import com.locker.common.exception.model.ErrorCode;
 
 public class UserException extends CustomException {
     private UserException(ErrorCode code) {

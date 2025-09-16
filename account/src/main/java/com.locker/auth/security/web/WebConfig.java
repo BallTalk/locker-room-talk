@@ -1,6 +1,6 @@
 package com.locker.auth.security.web;
 
-import com.locker.intercepter.LoggingInterceptor;
+import com.locker.common.intercepter.LoggingInterceptor;
 import com.locker.auth.security.resolver.CurrentUserArgumentResolver;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

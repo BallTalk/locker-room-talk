@@ -7,7 +7,7 @@ import com.locker.auth.application.VerifySmsCommand;
 import com.locker.auth.infra.RedisSmsCodeRepository;
 import com.locker.auth.infra.SmsSender;
 import com.locker.auth.application.AuthException;
-import com.locker.exception.model.ErrorCode;
+import com.locker.common.exception.model.ErrorCode;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

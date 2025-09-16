@@ -1,8 +1,8 @@
-package com.locker.exception.handler;
+package com.locker.common.exception.handler;
 
-import com.locker.exception.base.CustomException;
-import com.locker.exception.model.ErrorCode;
-import com.locker.exception.model.ErrorResponse;
+import com.locker.common.exception.base.CustomException;
+import com.locker.common.exception.model.ErrorCode;
+import com.locker.common.exception.model.ErrorResponse;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

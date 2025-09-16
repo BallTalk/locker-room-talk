@@ -1,4 +1,4 @@
-package com.locker.intercepter;
+package com.locker.common.intercepter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
