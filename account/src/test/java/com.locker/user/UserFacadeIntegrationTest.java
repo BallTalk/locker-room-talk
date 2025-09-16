@@ -66,7 +66,7 @@ class UserFacadeIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        userRepository.deleteAll();
+        //userRepository.deleteAll();
         redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 

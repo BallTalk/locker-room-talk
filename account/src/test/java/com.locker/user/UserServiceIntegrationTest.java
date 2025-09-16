@@ -26,8 +26,7 @@ public class UserServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        userRepository.deleteAll();
-
+        //userRepository.deleteAll();
     }
 
     @Test
