@@ -1,3 +1,50 @@
+-- menu 임시데이터
+
+-- LEFT MENU
+-- 뉴스
+INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
+VALUES ('뉴스', 'LEFT', 'NEWS', NULL, NULL, 5, 'Y', 'system', 'system');
+
+-- 캘린더
+INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
+VALUES ('캘린더', 'LEFT', 'CALENDAR', NULL, NULL, 6, 'Y', 'system', 'system');
+
+-- 자유게시판 (board.id=1, type=GENERAL)
+INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
+VALUES ('자유게시판', 'LEFT', 'BOARD', 'GENERAL', '1', 1, 'Y', 'system', 'system');
+
+-- 내 팀 게시판 (로그인 유저 team_code 기반 → ref_id NULL)
+INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
+VALUES ('내 팀 게시판', 'LEFT', 'BOARD', 'TEAM', NULL, 2, 'Y', 'system', 'system');
+
+-- 공지사항 (board.id=2, type=NOTICE)
+INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
+VALUES ('공지사항', 'LEFT', 'BOARD', 'NOTICE', '2', 3, 'Y', 'system', 'system');
+
+-- Q&A (board.id=3, type=QNA)
+INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
+VALUES ('Q&A', 'LEFT', 'BOARD', 'QNA', '3', 4, 'Y', 'system', 'system');
+
+-- RIGHT MENU
+-- 내 정보
+INSERT INTO `menu` (name, position, type, sort_order, visible_yn, created_by, updated_by)
+VALUES ('내 정보', 'RIGHT', 'USER', 1, 'Y', 'system', 'system');
+
+-- 알림(내 글의 댓글, 내 댓글의 댓글, + ... (좋아요 등 정책))
+INSERT INTO `menu` (name, position, type, sort_order, visible_yn, created_by, updated_by)
+VALUES ('알림', 'RIGHT', 'NOTIFICATION', 2, 'Y', 'system', 'system');
+
+-- 내가 북마크한 글
+INSERT INTO `menu` (name, position, type, sort_order, visible_yn, created_by, updated_by)
+VALUES ('북마크한 글', 'RIGHT', 'MY_BOOKMARKS', 3, 'Y', 'system', 'system');
+
+
+
+
+
+
+
+
 -- team 메타데이터
 INSERT INTO `team` (code, name_en, name_kr, logo_url, created_by, updated_by)
 VALUES

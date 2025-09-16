@@ -6,6 +6,23 @@ DROP TABLE IF EXISTS `post`;
 DROP TABLE IF EXISTS `board`;
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `team`;
+DROP TABLE IF EXISTS `menu`;
+
+CREATE TABLE `menu` (
+    menu_id      BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '메뉴 ID',
+    name         VARCHAR(100) NOT NULL COMMENT '메뉴 이름 (공지, 자유게시판, 내 팀 등)',
+    position     VARCHAR(10)  NOT NULL COMMENT '위치 (LEFT, RIGHT)',
+    type         VARCHAR(20)  NOT NULL COMMENT '메뉴 유형 (BOARD, TEAM, USER, ...)',
+    ref_type     VARCHAR(20)  NULL COMMENT '참조 도메인 유형 (BOARD, TEAM, USER, ...)',
+    ref_id       VARCHAR(50)  NULL COMMENT '참조 도메인 식별자 (BOARD.ID, TEAM.CODE, ...)',
+    path         VARCHAR(255) NULL COMMENT '프론트 라우팅 경로 (/board/notice 등)',
+    sort_order   INT          NOT NULL COMMENT '정렬 순서',
+    visible_yn   CHAR(1)      NOT NULL DEFAULT 'Y' COMMENT '노출 여부 (Y/N)',
+    created_by   VARCHAR(50)  NOT NULL COMMENT '생성자',
+    created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
+    updated_by   VARCHAR(50)  NOT NULL COMMENT '변경자',
+    updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '변경일'
+) ENGINE=InnoDB COMMENT='메뉴 테이블';
 
 CREATE TABLE `team` (
     code                VARCHAR(20)   PRIMARY KEY COMMENT '팀 코드 (불변, 시스템 식별자)',
