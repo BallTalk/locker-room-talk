@@ -13,7 +13,7 @@ VALUES ('캘린더', 'LEFT', 'CALENDAR', NULL, NULL, 6, 'Y', 'system', 'system')
 INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
 VALUES ('자유게시판', 'LEFT', 'BOARD', 'GENERAL', '1', 1, 'Y', 'system', 'system');
 
--- 내 팀 게시판 (로그인 유저 team_code 기반 → ref_id NULL)ㅇ
+-- 내 팀 게시판 (로그인 유저 team_code 기반 → ref_id NULL)
 INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
 VALUES ('내 팀 게시판', 'LEFT', 'BOARD', 'TEAM', NULL, 2, 'Y', 'system', 'system');
 
@@ -37,13 +37,6 @@ VALUES ('알림', 'RIGHT', 'NOTIFICATION', 2, 'Y', 'system', 'system');
 -- 내가 북마크한 글
 INSERT INTO `menu` (name, position, type, sort_order, visible_yn, created_by, updated_by)
 VALUES ('북마크한 글', 'RIGHT', 'MY_BOOKMARKS', 3, 'Y', 'system', 'system');
-
-
-
-
-
-
-
 
 -- team 메타데이터
 INSERT INTO `team` (code, name_en, name_kr, logo_url, created_by, updated_by)
