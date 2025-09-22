@@ -13,9 +13,10 @@ public class MenuService {
     private final MenuRepository menuRepository;
 
     public List<Menu> getAllMenus() {
-        return Optional.of(menuRepository.findAll())
-                .filter(menus -> !menus.isEmpty())
-                .orElseThrow(MenuException::menuNotFound);
+        List<Menu> menus = menuRepository.findAllByVisibleYn("Y");
+        if (menus.isEmpty()) throw MenuException.menuNotFound();
+
+        return menus;
     }
 
 }

@@ -15,7 +15,7 @@ public class MenuRepositoryImpl implements MenuRepository {
     private final MenuJpaRepository menuJpaRepository;
 
     @Override
-    public List<Menu> findAll() {
-        return menuJpaRepository.findAll();
+    public List<Menu> findAllByVisibleYn(String y) {
+        return menuJpaRepository.findAllByVisibleYn(y);
     }
 }
