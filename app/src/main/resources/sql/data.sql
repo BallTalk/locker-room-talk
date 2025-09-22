@@ -13,7 +13,7 @@ VALUES ('캘린더', 'LEFT', 'CALENDAR', NULL, NULL, 6, 'Y', 'system', 'system')
 INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
 VALUES ('자유게시판', 'LEFT', 'BOARD', 'GENERAL', '1', 1, 'Y', 'system', 'system');
 
--- 내 팀 게시판 (로그인 유저 team_code 기반 → ref_id NULL)
+-- 내 팀 게시판 (로그인 유저 team_code 기반 → ref_id NULL)ㅇ
 INSERT INTO `menu` (name, position, type, ref_type, ref_id, sort_order, visible_yn, created_by, updated_by)
 VALUES ('내 팀 게시판', 'LEFT', 'BOARD', 'TEAM', NULL, 2, 'Y', 'system', 'system');
 
