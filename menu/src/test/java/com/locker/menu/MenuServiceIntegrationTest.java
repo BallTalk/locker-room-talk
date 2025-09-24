@@ -19,13 +19,14 @@ class MenuServiceIntegrationTest {
     private MenuService menuService;
 
     @Test
-    void 메뉴조회시_DB에_데이터가_있으면_반환된다() {
+    void 앱_가동시_캐시된_메뉴가_초기화된다() {
+        // given : @SpringBootTest -> 스프링 컨텍스트 가동 시 @PostConstruct 실행
+
         // when
-        List<Menu> menus = menuService.getAllMenus();
+        List<Menu> cached = menuService.getAllMenus();
 
         // then
-        assertFalse(menus.isEmpty());
-        //assertTrue(menus.stream().anyMatch(m -> m.getName().equals("뉴스")));
-        //assertTrue(menus.stream().anyMatch(m -> m.getName().equals("캘린더"))); // 바뀔수도 있어서 주석처리함
+        assertFalse(cached.isEmpty()); // 캐시에 이미 값이 올라가 있음
     }
+
 }
