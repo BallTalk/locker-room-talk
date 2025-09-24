@@ -15,7 +15,29 @@ public class PostRepositoryImpl implements PostRepository {
     private final PostJpaRepository postJpaRepository;
 
     @Override
-    public List<Post> findGeneralBoardTop5Posts() {
-        return postJpaRepository.findGeneralBoardTop5Posts();
+    public Post save(Post post) {
+        return postJpaRepository.save(post);
     }
+
+    @Override
+    public List<Post> findAll() {
+        return postJpaRepository.findAll();
+    }
+
+    @Override
+    public List<Post> findGeneralTop5Posts(Long generalId) {
+        return postJpaRepository.findGeneralTop5Posts(generalId);
+    }
+
+    @Override
+    public List<Post> findGeneralLatest10Posts(Long generalId) {
+        return postJpaRepository.findGeneralLatest10Posts(generalId);
+    }
+
+    @Override
+    public List<Post> findGeneralNext10Posts(Long generalId, Long lastPostId) {
+        return postJpaRepository.findGeneralNext10Posts(generalId, lastPostId);
+    }
+
+
 }

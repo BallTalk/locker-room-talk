@@ -1,7 +1,7 @@
 package com.locker.home.application;
 
 import com.locker.menu.domain.MenuService;
-import com.locker.team.domain.TeamService;
+import com.locker.post.domain.PostService;
 import com.locker.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,28 +16,32 @@ public class HomeFacade {
 
     private final MenuService menuService;
     private final UserService userService;
-    // private final PostService postService;
+    private final PostService postService;
 
     @Transactional(readOnly = true)
     public HomeInfo getHome(String loginId) {
-        List<HomeMenuInfo> menuInfos = menuService.getAllMenus().stream()
+        List<HomeMenuInfo> menus = menuService.getAllMenus().stream()
                 .map(HomeMenuInfo::from)
                 .toList();
 
-        HomeUserInfo userInfo = Optional.ofNullable(loginId)
+        HomeUserInfo user = Optional.ofNullable(loginId)
                 .map(userService::findByLoginId)
                 .map(HomeUserInfo::from)
                 .orElse(null);
 
-        // 게시글 조회
-        // List<HomePostInfo> topPosts = postService.getTopPosts();    // 상단 5개
-        // List<HomePostInfo> feed = postService.getFeed();            // 무한 스크롤용 피드
+        List<HomePostInfo> topPosts = postService.getGeneralTop5Posts().stream()
+                .map(HomePostInfo::from)
+                .toList();
+
+        List<HomePostInfo> feed = postService.getGeneralFeed(null).stream()
+                .map(HomePostInfo::from)
+                .toList();
 
         return new HomeInfo(
-                menuInfos,
-                /* topPosts */ null,
-                /* feed */ null,
-                /* user */ null
+                menus,
+                topPosts,
+                feed,
+                user
         );
     }
 }

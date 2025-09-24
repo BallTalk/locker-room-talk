@@ -74,9 +74,9 @@ CREATE TABLE `board` (
     allow_anonymous     CHAR(1)       NOT NULL DEFAULT 'N' COMMENT '익명 글 허용 여부',
     post_count          INT           NOT NULL DEFAULT 0 COMMENT '게시글 수 (캐싱)',
     comment_count       INT           NOT NULL DEFAULT 0 COMMENT '댓글 수 (캐싱)',
-    created_by          BIGINT        NOT NULL COMMENT '생성자',
+    created_by          VARCHAR(50)   NOT NULL COMMENT '생성자',
     created_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
-    updated_by          BIGINT        NOT NULL COMMENT '변경자',
+    updated_by          VARCHAR(50)   NOT NULL COMMENT '변경자',
     updated_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '변경일',
 
     INDEX idx_board_type (type),
@@ -99,15 +99,13 @@ CREATE TABLE `post` (
     view_count          INT           NOT NULL DEFAULT 0 COMMENT '조회수',
     like_count          INT           NOT NULL DEFAULT 0 COMMENT '좋아요 수 (캐싱)',
     comment_count       INT           NOT NULL DEFAULT 0 COMMENT '댓글 수 (캐싱)',
-    created_by          BIGINT        NOT NULL COMMENT '생성자',
-
+    created_by          VARCHAR(50)   NOT NULL COMMENT '생성자',
     created_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
-    updated_by          BIGINT        NOT NULL COMMENT '변경자',
+    updated_by          VARCHAR(50)   NOT NULL COMMENT '변경자',
     updated_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '변경일',
 
-    INDEX idx_post_board (board_id, created_at DESC),
+    INDEX idx_post_boardid_status_created_at (board_id, status, created_at DESC),
     INDEX idx_post_author (author_id),
-    INDEX idx_post_status (status),
 
     CONSTRAINT fk_post_board FOREIGN KEY (board_id) REFERENCES board(id),
     CONSTRAINT fk_post_author FOREIGN KEY (author_id) REFERENCES user(id)
@@ -123,9 +121,9 @@ CREATE TABLE `post_comment` (
     status          VARCHAR(20)     NOT NULL DEFAULT 'ACTIVE' COMMENT '댓글 상태 (ACTIVE, HIDDEN, DELETED)',
                     CHECK (status IN ('ACTIVE', 'HIDDEN', 'DELETED')),
     like_count      INT             NOT NULL DEFAULT 0 COMMENT '좋아요 수 (캐싱)',
-    created_by      BIGINT          NOT NULL COMMENT '생성자',
+    created_by      VARCHAR(50)     NOT NULL COMMENT '생성자',
     created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
-    updated_by      BIGINT          NOT NULL COMMENT '변경자',
+    updated_by      VARCHAR(50)     NOT NULL COMMENT '변경자',
     updated_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '변경일',
 
     INDEX idx_comment_post (post_id, created_at),

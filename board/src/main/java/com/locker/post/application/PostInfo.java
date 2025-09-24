@@ -1,8 +1,8 @@
-package com.locker.home.application;
+package com.locker.post.application;
 
 import com.locker.post.domain.Post;
 
-public record HomePostInfo(
+public record PostInfo(
         Long id,
         Long authorId,
         String title,
@@ -11,8 +11,8 @@ public record HomePostInfo(
         Integer likeCount,
         Integer commentCount
 ) {
-    public static HomePostInfo from(Post post) {
-        return new HomePostInfo(
+    public static PostInfo from(Post post) {
+        return new PostInfo(
                 post.getId(),
                 post.getAuthorId(),
                 post.getTitle(),
