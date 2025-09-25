@@ -19,7 +19,7 @@ public class HomeFacade {
     private final PostService postService;
 
     @Transactional(readOnly = true)
-    public HomeInfo getHome(String loginId) {
+    public HomeInfo getHome() {
         List<HomeMenuInfo> menus = menuService.getAllMenus().stream()
                 .map(HomeMenuInfo::from)
                 .toList();
@@ -32,10 +32,6 @@ public class HomeFacade {
                 .map(HomePostInfo::from)
                 .toList();
 
-        return new HomeInfo(
-                menus,
-                topPosts,
-                feed
-        );
+        return new HomeInfo(menus, topPosts, feed);
     }
 }

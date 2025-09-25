@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/api/boards")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Board API", description = "게시판 관련 API 입니다.")
 public class BoardController {
+
+
+
+
 }

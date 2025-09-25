@@ -24,10 +24,8 @@ public class HomeController {
             summary = "홈 메인 페이지 데이터 조회",
             description = "메인페이지에 필요한 데이터들을 조회해 반환합니다."
     )
-    public ResponseEntity<HomeResponse> getHome(
-            @CurrentUser(required = false) String loginId
-    ) {
-        HomeInfo info = homeFacade.getHome(loginId);
+    public ResponseEntity<HomeResponse> getHome() {
+        HomeInfo info = homeFacade.getHome();
         return ResponseEntity.ok(HomeResponse.from(info));
     }
 

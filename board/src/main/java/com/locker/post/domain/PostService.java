@@ -1,7 +1,10 @@
 package com.locker.post.domain;
 
 import com.locker.board.domain.BoardType;
+import com.locker.post.application.PostInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,5 +25,9 @@ public class PostService {
            return postRepository.findGeneralLatest10Posts(BoardType.GENERAL_ID);
         }
         return postRepository.findGeneralNext10Posts(BoardType.GENERAL_ID, lastPostId);
+    }
+
+    public Page<Post> findByBoardId(Long boardId, Pageable pageable, String keyword, PostKeywordType keywordType) {
+        return postRepository.findByBoardId(boardId, pageable, keyword, keywordType);
     }
 }

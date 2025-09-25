@@ -1,6 +1,7 @@
 package com.locker.post.domain;
 
-import org.springframework.beans.PropertyValues;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,4 +18,5 @@ public interface PostRepository {
 
     List<Post> findGeneralNext10Posts(Long generalId, Long lastPostId);
 
+    Page<Post> findByBoardId(Long boardId, Pageable pageable, String keyword, PostKeywordType keywordType);
 }
