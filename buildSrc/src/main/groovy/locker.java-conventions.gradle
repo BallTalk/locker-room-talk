@@ -36,9 +36,30 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${libs.versions.lombok.get()}"
     annotationProcessor "org.projectlombok:lombok:${libs.versions.lombok.get()}"
 
+    implementation "com.querydsl:querydsl-jpa:${libs.versions.querydsl.get()}:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:${libs.versions.querydsl.get()}:jakarta"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api:${libs.versions.jakarta.persistence.get()}"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api:${libs.versions.jakarta.annotation.get()}"
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testCompileOnly "org.projectlombok:lombok:${libs.versions.lombok.get()}"
     testAnnotationProcessor "org.projectlombok:lombok:${libs.versions.lombok.get()}"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir("$buildDir/generated/sources/annotationProcessor/java/main")
+        }
+    }
+}
+
+tasks.register('cleanQuerydsl', Delete) {
+    delete = layout.buildDirectory.dir("generated/sources/annotationProcessor/java/main")
+}
+
+tasks.named('clean') {
+    dependsOn 'cleanQuerydsl'
 }
 
 jacocoTestReport {

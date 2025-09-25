@@ -8,6 +8,9 @@ redisson       = "3.43.0"
 springdoc      = "2.2.0"
 testcontainers = "1.18.3"
 coolsms = "4.3.0"
+querydsl = "5.1.0"
+jakarta-persistence = "3.1.0"
+jakarta-annotation  = "2.1.1"
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "boot" }

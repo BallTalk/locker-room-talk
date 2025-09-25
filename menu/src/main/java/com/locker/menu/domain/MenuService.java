@@ -9,7 +9,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "menu.init.enabled", havingValue = "true",matchIfMissing = true)
 public class MenuService {
 
     private final MenuRepository menuRepository;
