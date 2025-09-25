@@ -1,6 +1,5 @@
 package com.locker.auth.application;
 
-import com.locker.auth.security.jwt.JwtProperties;
 import com.locker.auth.security.jwt.JwtTokenProvider;
 import com.locker.user.domain.User;
 import com.locker.user.domain.UserService;
@@ -16,13 +15,13 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class loginService {
+public class LoginService {
     private final AuthenticationManager authManager;
     private final JwtTokenProvider jwtProvider;
     private final UserService userService;
 
     @Transactional
-    public String login(LoginCommand command) {
+    public LoginInfo login(LoginCommand command) {
         try {
             Authentication auth = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -32,7 +31,9 @@ public class loginService {
             User user = userService.findByLoginIdAndActiveOrDormant(command.loginId());
             user.loginSucceeded(LocalDateTime.now());
 
-            return jwtProvider.createToken(auth.getName());
+            String token = jwtProvider.createToken(auth.getName());
+            
+            return new LoginInfo(token, user);
         } catch (BadCredentialsException ex) {
             throw AuthException.authenticationFailed();
         }

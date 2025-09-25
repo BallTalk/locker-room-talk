@@ -1,6 +1,6 @@
 package com.locker.auth.login;
 
-import com.locker.auth.application.loginService;
+import com.locker.auth.application.LoginService;
 import com.locker.auth.application.LoginCommand;
 import com.locker.auth.application.AuthException;
 import com.locker.user.domain.UserException;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class loginServiceUnitTest {
+class LoginServiceUnitTest {
 
     @Mock
     private AuthenticationManager authManager;
@@ -37,7 +37,7 @@ class loginServiceUnitTest {
     private UserService userService;
 
     @InjectMocks
-    private loginService authService;
+    private LoginService loginService;
 
     @Captor
     private ArgumentCaptor<UsernamePasswordAuthenticationToken> authTokenCaptor;
@@ -71,7 +71,7 @@ class loginServiceUnitTest {
         when(jwtProvider.createToken(LOGIN_ID)).thenReturn("dummyToken");
 
         // when
-        authService.login(command);
+        loginService.login(command);
 
         // then
         verify(authManager).authenticate(authTokenCaptor.capture());
@@ -93,7 +93,7 @@ class loginServiceUnitTest {
 
         // when & then
         assertThrows(
-                AuthException.class, () -> authService.login(command)
+                AuthException.class, () -> loginService.login(command)
         );
     }
 
@@ -109,7 +109,7 @@ class loginServiceUnitTest {
 
         // when & then
         assertThrows(
-                UserException.class, () -> authService.login(command)
+                UserException.class, () -> loginService.login(command)
         );
     }
 }

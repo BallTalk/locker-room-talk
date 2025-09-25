@@ -2,12 +2,14 @@ package com.locker.menu.domain;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "menu.init.enabled", havingValue = "true",matchIfMissing = true)
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -19,7 +21,6 @@ public class MenuService {
     @PostConstruct
     public void init() {
         this.cachedMenus = List.copyOf(menuRepository.findAllByVisibleYn("Y"));
-        if (cachedMenus.isEmpty()) throw MenuException.menuNotFound();
     }
 
     public List<Menu> getAllMenus() {
@@ -28,7 +29,6 @@ public class MenuService {
 
     public void refresh() {
         this.cachedMenus = List.copyOf(menuRepository.findAllByVisibleYn("Y"));
-        if (cachedMenus.isEmpty()) throw MenuException.menuNotFound();
     }
 
 }

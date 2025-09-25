@@ -26,18 +26,26 @@ public class MenuServiceUnitTest {
     @InjectMocks
     private MenuService menuService;
 
+
     @Test
-    void 메뉴조회시_visibleYn이_Y인_메뉴가_DB에_없으면_MENU_NOT_FOUND_예외가_발생한다() {
+    void getAllMenus_을_호출후에_refresh_하면_repository를_재호출하지않고_캐시된_값을_반환한다() {
         // given
-        when(menuRepository.findAllByVisibleYn("Y")).thenReturn(List.of());
+        List<Menu> mockMenus = List.of(
+                Menu.builder().id(1L).name("홈")
+                        .position("TOP").type("LINK").path("/")
+                        .sortOrder(1).visibleYn("Y")
+                        .createdBy("tester").updatedBy("tester")
+                        .build()
+        );
+        when(menuRepository.findAllByVisibleYn("Y")).thenReturn(mockMenus);
 
-        // when & then
-        MenuException ex = assertThrows(MenuException.class,
-                () -> menuService.refresh()); // init 으로 바껴서 getAllMenus() 대신 refresh() 호출
+        // when
+        menuService.refresh();
+        menuService.getAllMenus();
+        menuService.getAllMenus();
 
-        assertEquals(ErrorCode.MENU_NOT_FOUND, ex.getErrorCode());
-        verify(menuRepository).findAllByVisibleYn("Y");
+        // then
+        verify(menuRepository, times(1)).findAllByVisibleYn("Y"); // 한 번만 호출됨
     }
-
 
 }

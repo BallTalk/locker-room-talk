@@ -56,7 +56,6 @@ spring:
             user-name-attribute: id
 
 ---
-
 spring:
   config:
     activate:
@@ -66,8 +65,8 @@ spring:
       mode: always
       schema-locations: classpath:sql/schema.sql
       data-locations: classpath:sql/data.sql
----
 
+---
 spring:
   config:
     activate:
@@ -78,7 +77,6 @@ spring:
   sql:
     init:
       mode: never
-
 ---
 
 jwt:

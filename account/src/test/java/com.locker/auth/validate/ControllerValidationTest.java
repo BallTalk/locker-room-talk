@@ -1,6 +1,6 @@
 package com.locker.auth.validate;
 
-import com.locker.auth.api.loginController;
+import com.locker.auth.api.LoginController;
 import com.locker.common.exception.handler.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,14 +20,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ControllerValidationTest {
 
     @InjectMocks
-    private loginController authController;
+    private LoginController loginController;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setup() {
         mockMvc = MockMvcBuilders
-                .standaloneSetup(authController)
+                .standaloneSetup(loginController)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }

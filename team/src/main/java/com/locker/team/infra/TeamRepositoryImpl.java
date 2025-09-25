@@ -5,6 +5,7 @@ import com.locker.team.domain.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,6 +14,10 @@ public class TeamRepositoryImpl implements TeamRepository {
 
     private final TeamJpaRepository teamJpaRepository;
 
+    @Override
+    public Team save(Team team) {
+        return teamJpaRepository.save(team);
+    }
 
     @Override
     public Optional<Team> findByCode(String teamCode) {

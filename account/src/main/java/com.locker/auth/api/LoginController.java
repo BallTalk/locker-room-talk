@@ -1,6 +1,7 @@
 package com.locker.auth.api;
 
-import com.locker.auth.application.loginService;
+import com.locker.auth.application.LoginInfo;
+import com.locker.auth.application.LoginService;
 import com.locker.auth.security.jwt.JwtProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,30 +16,30 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Tag(name = "Auth API", description = "로그인 API")
-public class loginController {
+public class LoginController {
 
-    private final loginService authService;
+    private final LoginService loginService;
     private final JwtProperties jwtProperties;
-
 
     @PostMapping("/login")
     @Operation(
             summary = "로그인",
-            description = "아이디/비밀번호로 로그인하고 JSON_WEB_TOKEN 을 HttpOnly 쿠키로 발급받습니다."
+            description = "아이디/비밀번호로 로그인하고 JSON_WEB_TOKEN 을 HttpOnly 쿠키로 발급받습니다. 응답으로 사용자 정보를 반환합니다."
     )
-    public ResponseEntity<Void> login(
+    public ResponseEntity<LoginResponse> login(
             @RequestBody @Valid LoginRequest req,
             HttpServletResponse response
     ) {
-        String token = authService.login(req.toCommand());
+        LoginInfo result = loginService.login(req.toCommand());
 
-        Cookie cookie = new Cookie("ACCESS_TOKEN", token);
+        Cookie cookie = new Cookie("ACCESS_TOKEN", result.token());
         cookie.setHttpOnly(true);
         cookie.setSecure(false); // HTTPS -> true
         cookie.setPath("/");
         cookie.setMaxAge((int)(jwtProperties.getExpirationMs() / 1000));
         response.addCookie(cookie);
 
-        return ResponseEntity.noContent().build();
+        LoginResponse loginResponse = LoginResponse.from(result.user());
+        return ResponseEntity.ok(loginResponse);
     }
 }

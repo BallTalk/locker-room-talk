@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 public class UserServiceIntegrationTest {
 
     @Autowired
@@ -171,6 +173,7 @@ public class UserServiceIntegrationTest {
                         .teamCode(toUpdate.getTeamCode())
                         .profileImageUrl(toUpdate.getProfileImageUrl())
                         .statusMessage(toUpdate.getStatusMessage())
+                        .phoneNumber(toUpdate.getPhoneNumber())
                         .status(Status.DORMANT)
                         .lastLoginAt(toUpdate.getLastLoginAt())
                         .loginFailCount(toUpdate.getLoginFailCount())

@@ -6,19 +6,18 @@ public record HomeInfo(
         List<HomeMenuInfo> leftMenus,
         List<HomeMenuInfo> rightMenus,
         List<HomePostInfo> topPosts,
-        List<HomePostInfo> feed,
-        HomeUserInfo user
+        List<HomePostInfo> feed
 ) {
-    public HomeInfo(List<HomeMenuInfo> allMenus,
-                    List<HomePostInfo> topPosts,
-                    List<HomePostInfo> feed,
-                    HomeUserInfo user) {
+    public HomeInfo(
+            List<HomeMenuInfo> allMenus,
+            List<HomePostInfo> topPosts,
+            List<HomePostInfo> feed
+    ) {
         this(
-                allMenus.stream().filter(HomeMenuInfo::isLeft).toList(),
-                allMenus.stream().filter(HomeMenuInfo::isRight).toList(),
-                topPosts,
-                feed,
-                user
+            allMenus.stream().filter(HomeMenuInfo::isLeft).toList(),
+            allMenus.stream().filter(HomeMenuInfo::isRight).toList(),
+            topPosts,
+            feed
         );
     }
 }

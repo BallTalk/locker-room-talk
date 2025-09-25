@@ -24,11 +24,6 @@ public class HomeFacade {
                 .map(HomeMenuInfo::from)
                 .toList();
 
-        HomeUserInfo user = Optional.ofNullable(loginId)
-                .map(userService::findByLoginId)
-                .map(HomeUserInfo::from)
-                .orElse(null);
-
         List<HomePostInfo> topPosts = postService.getGeneralTop5Posts().stream()
                 .map(HomePostInfo::from)
                 .toList();
@@ -40,8 +35,7 @@ public class HomeFacade {
         return new HomeInfo(
                 menus,
                 topPosts,
-                feed,
-                user
+                feed
         );
     }
 }
