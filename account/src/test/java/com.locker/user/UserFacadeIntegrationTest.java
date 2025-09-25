@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
@@ -29,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Testcontainers
+@ActiveProfiles("test")
 class UserFacadeIntegrationTest {
 
     @Container
@@ -66,7 +68,7 @@ class UserFacadeIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        userRepository.deleteAll();
+        //userRepository.deleteAll();
         redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 

@@ -15,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "User API", description = "유저 관련 API 입니다.")
@@ -41,7 +41,11 @@ public class UserController {
             description = "이미 존재하는 아이디가 있는지 확인합니다."
     )
     public ResponseEntity<Boolean> exists(
-            @RequestParam String loginId
+            @RequestParam
+            @NotBlank(message = "LOGIN_ID_REQUIRED")
+            @Size(min = 5, max = 20, message = "LOGIN_ID_LENGTH_INVALID")
+            @Pattern(regexp = "^[a-z0-9]{5,20}$", message = "LOGIN_ID_PATTERN_INVALID")
+            String loginId
     ) {
         return ResponseEntity.ok(userFacade.exists(loginId));
     }
@@ -54,9 +58,7 @@ public class UserController {
     public ResponseEntity<MyProfileResponse> getMyProfile(
             @CurrentUser String loginId
     ) {
-        return ResponseEntity.ok(
-                MyProfileResponse.from(userFacade.getUserProfile(loginId))
-        );
+        return ResponseEntity.ok(MyProfileResponse.from(userFacade.getUserProfile(loginId)));
     }
 
     @PatchMapping("/me")
@@ -103,7 +105,9 @@ public class UserController {
             summary = "회원 탈퇴",
             description = "현재 로그인된 사용자를 탈퇴 처리합니다. (@CurrentUser)"
     )
-    public ResponseEntity<Void> withdraw(@CurrentUser String loginId) {
+    public ResponseEntity<Void> withdraw(
+            @CurrentUser String loginId
+    ) {
         userFacade.withdraw(loginId);
         return ResponseEntity.noContent().build();
     }
@@ -113,12 +117,14 @@ public class UserController {
             summary = "아이디 찾기",
             description = "전화번호와 SMS 인증 코드를 받아 검증 후 매핑된 로그인 ID를 반환합니다."
     )
-    public ResponseEntity<FindIdResponse> findIdWithSms(@Valid @RequestBody FindIdRequest req) {
+    public ResponseEntity<FindIdResponse> findIdWithSms(
+            @Valid @RequestBody FindIdRequest req
+    ) {
         String loginId = userFacade.findIdWithSms(req.toCommand());
         return ResponseEntity.ok(FindIdResponse.from(loginId));
     }
 
-    @GetMapping("/check/{loginId}")
+    @GetMapping("/check/{loginId}") // exists 통합
     @Operation(summary = "아이디 존재 확인",
             description = "주어진 로그인 아이디가 가입된 계정인지 확인합니다. 비밀번호 재설정 과정에서 필요합니다.")
     public ResponseEntity<Void> checkLoginId(
@@ -129,7 +135,7 @@ public class UserController {
             String loginId
     ) {
         userFacade.getUserByLoginId(loginId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/reset-password")
@@ -137,7 +143,9 @@ public class UserController {
             summary = "비밀번호 재설정",
             description = "전화번호와 SMS 인증 코드를 받아 검증 후 새 비밀번호로 재설정합니다."
     )
-    public ResponseEntity<Void> resetPasswordWithSms(@Valid @RequestBody ResetPasswordRequest req) {
+    public ResponseEntity<Void> resetPasswordWithSms(
+            @Valid @RequestBody ResetPasswordRequest req
+    ) {
         userFacade.resetPasswordWithSms(req.toCommand());
         return ResponseEntity.ok().build();
     }

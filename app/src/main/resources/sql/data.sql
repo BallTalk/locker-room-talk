@@ -38,13 +38,6 @@ VALUES ('알림', 'RIGHT', 'NOTIFICATION', 2, 'Y', 'system', 'system');
 INSERT INTO `menu` (name, position, type, sort_order, visible_yn, created_by, updated_by)
 VALUES ('북마크한 글', 'RIGHT', 'MY_BOOKMARKS', 3, 'Y', 'system', 'system');
 
-
-
-
-
-
-
-
 -- team 메타데이터
 INSERT INTO `team` (code, name_en, name_kr, logo_url, created_by, updated_by)
 VALUES

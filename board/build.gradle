@@ -6,6 +6,7 @@ dependencies {
     implementation project(':team')
     implementation project(":account")
     implementation project(":common")
+    testImplementation project(':app')
     testImplementation testFixtures(project(':test-support'))
 
 }
